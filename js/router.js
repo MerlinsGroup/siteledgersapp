@@ -35,6 +35,7 @@ const routes = {
 
 // Track the currently loaded page script module for cleanup
 let currentPageModule = null;
+let navigating = false;
 
 // ─── Route Matching ─────────────────────────────────────
 
@@ -99,78 +100,101 @@ function getCurrentPath() {
  * Handle route changes. Called on hash change and initial load.
  */
 async function handleRouteChange() {
-  const path = getCurrentPath();
-  const result = matchRoute(path);
+  // Prevent concurrent navigation
+  if (navigating) return;
+  navigating = true;
 
-  if (!result) {
-    navigateTo('/');
-    return;
-  }
+  try {
+    const path = getCurrentPath();
+    const result = matchRoute(path);
 
-  const { route, params, pattern } = result;
+    if (!result) {
+      navigating = false;
+      navigateTo('/');
+      return;
+    }
 
-  // ── Auth guard ──
-  if (route.auth && !isAuthenticated()) {
-    navigateTo('/login');
-    return;
-  }
+    const { route, params, pattern } = result;
 
-  // If already authenticated and trying to visit public auth pages, redirect to dashboard
-  if (['/login', '/signup', '/verify-email'].includes(path) && !path.startsWith('/join') && isAuthenticated()) {
-    navigateTo('/dashboard');
-    return;
-  }
+    // ── Auth guard ──
+    if (route.auth && !isAuthenticated()) {
+      navigating = false;
+      navigateTo('/login');
+      return;
+    }
 
-  // ── Role-based access guard ──
-  if (route.auth) {
-    const { role } = getState();
-    if (role && !canAccessPage(role, pattern)) {
+    // If already authenticated and trying to visit public auth pages, redirect to dashboard
+    if (['/login', '/signup', '/verify-email'].includes(path) && !path.startsWith('/join') && isAuthenticated()) {
+      navigating = false;
       navigateTo('/dashboard');
       return;
     }
-  }
 
-  // ── Update page title ──
-  document.title = route.title;
-
-  // ── Cleanup previous page module ──
-  if (currentPageModule && typeof currentPageModule.destroy === 'function') {
-    currentPageModule.destroy();
-  }
-  currentPageModule = null;
-
-  // ── Toggle navbar visibility ──
-  const navbarContainer = document.getElementById('navbar-container');
-  if (navbarContainer) {
-    navbarContainer.style.display = route.auth ? '' : 'none';
-  }
-
-  // ── Load page HTML into the app container ──
-  const container = document.getElementById('app');
-  if (container && route.page) {
-    try {
-      const response = await fetch(route.page);
-      if (response.ok) {
-        container.innerHTML = await response.text();
-      } else {
-        container.innerHTML = '<div class="page-error"><h1>Page not found</h1><p><a href="#/dashboard">Go to Dashboard</a></p></div>';
+    // ── Role-based access guard ──
+    if (route.auth) {
+      const { role } = getState();
+      if (role && !canAccessPage(role, pattern)) {
+        navigating = false;
+        navigateTo('/dashboard');
+        return;
       }
-    } catch (err) {
-      container.innerHTML = '<div class="page-error"><h1>Error loading page</h1><p>Please check your connection and try again.</p></div>';
     }
-  }
 
-  // ── Load page-specific script ──
-  if (route.script) {
-    try {
-      const module = await import('../' + route.script);
-      currentPageModule = module;
-      if (module.init) {
-        module.init(params);
+    // ── Update page title ──
+    document.title = route.title;
+
+    // ── Cleanup previous page module ──
+    if (currentPageModule && typeof currentPageModule.destroy === 'function') {
+      try {
+        currentPageModule.destroy();
+      } catch (e) {
+        console.error('Error destroying page module:', e);
       }
-    } catch (err) {
-      console.error('Error loading page script:', err);
     }
+    currentPageModule = null;
+
+    // ── Toggle navbar visibility ──
+    const navbarContainer = document.getElementById('navbar-container');
+    if (navbarContainer) {
+      navbarContainer.style.display = route.auth ? '' : 'none';
+    }
+
+    // ── Load page HTML into the app container ──
+    const container = document.getElementById('app');
+    if (container && route.page) {
+      try {
+        const response = await fetch(route.page);
+        if (response.ok) {
+          container.innerHTML = await response.text();
+        } else {
+          container.innerHTML = '<div class="page-error"><h1>Page not found</h1><p><a href="#/dashboard">Go to Dashboard</a></p></div>';
+        }
+      } catch (err) {
+        console.error('Error loading page HTML:', err);
+        container.innerHTML = '<div class="page-error"><h1>Error loading page</h1><p>Please check your connection and try again.</p></div>';
+      }
+    }
+
+    // ── Load page-specific script ──
+    if (route.script) {
+      try {
+        const module = await import('../' + route.script);
+        currentPageModule = module;
+        if (typeof module.init === 'function') {
+          await module.init(params);
+        }
+      } catch (err) {
+        console.error('Error loading page script:', route.script, err);
+      }
+    }
+
+    // ── Notify that route has changed (for navbar active state etc.) ──
+    window.dispatchEvent(new CustomEvent('routechanged', { detail: { path, pattern } }));
+
+  } catch (err) {
+    console.error('Route change error:', err);
+  } finally {
+    navigating = false;
   }
 }
 

@@ -85,7 +85,7 @@ function handleFilter(filter) {
   currentFilter = filter;
 
   document.querySelectorAll('#filter-tabs button').forEach((btn) => {
-    btn.className = btn.dataset.filter === filter ? 'btn btn--sm btn--primary' : 'btn btn--sm btn--ghost';
+    btn.className = btn.dataset.filter === filter ? 'btn btn--sm btn--primary' : 'btn btn--sm btn--secondary';
   });
 
   renderInspections();

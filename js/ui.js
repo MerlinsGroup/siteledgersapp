@@ -145,6 +145,13 @@ onStateChange((state) => {
   }
 });
 
+// Re-render navbar when route changes (to update active link)
+window.addEventListener('routechanged', () => renderNavbar());
+window.addEventListener('hashchange', () => {
+  // Small delay to let route handler run first
+  setTimeout(() => renderNavbar(), 10);
+});
+
 // ─── DOM Helpers ────────────────────────────────────────
 
 /**

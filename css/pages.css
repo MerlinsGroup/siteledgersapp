@@ -494,12 +494,57 @@
   margin-top: var(--space-4);
 }
 
+/* ─── Issue Detail / Inspection Detail Layout ──────────── */
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+}
+
+.detail-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* ─── Profile Layout ──────────────────────────────────── */
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  max-width: 800px;
+}
+
+/* ─── Form Grids ──────────────────────────────────────── */
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
 /* ─── Responsive ───────────────────────────────────────── */
 
 @media (max-width: 900px) {
   .pricing-grid {
     grid-template-columns: 1fr;
     max-width: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -514,5 +559,9 @@
 
   .pricing-header__title {
     font-size: var(--font-size-2xl);
+  }
+
+  .detail-meta-grid {
+    grid-template-columns: 1fr;
   }
 }

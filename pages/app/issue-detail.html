@@ -11,14 +11,14 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);">
+  <div class="detail-layout">
     <!-- Left column -->
     <div>
       <div class="card mb-6">
         <div class="card__header"><h3 class="card__title">Details</h3></div>
         <div class="card__body">
           <p id="issue-description" class="text-sm" style="white-space:pre-wrap;margin-bottom:var(--space-4);"></p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+          <div class="detail-meta-grid">
             <div><span class="text-xs text-muted">Category</span><p class="text-sm" id="issue-category">—</p></div>
             <div><span class="text-xs text-muted">Location</span><p class="text-sm" id="issue-location">—</p></div>
             <div><span class="text-xs text-muted">Due Date</span><p class="text-sm" id="issue-due-date">—</p></div>
@@ -63,7 +63,7 @@
 
       <div class="card" data-permission="issue_delete">
         <div class="card__body">
-          <button class="btn btn--sm btn--ghost" id="delete-issue-btn" style="color:var(--color-danger);">Delete Issue</button>
+          <button class="btn btn--sm btn--secondary" id="delete-issue-btn" style="color:var(--color-danger);">Delete Issue</button>
         </div>
       </div>
     </div>

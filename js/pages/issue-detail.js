@@ -107,7 +107,7 @@ function renderStatusActions() {
   }
 
   container.innerHTML = available.map((status) => `
-    <button class="btn btn--sm btn--ghost status-btn" data-status="${status}" style="margin-bottom:var(--space-2);width:100%;text-transform:capitalize;">
+    <button class="btn btn--sm btn--secondary status-btn" data-status="${status}" style="margin-bottom:var(--space-2);width:100%;text-transform:capitalize;">
       Mark as ${status.replace(/_/g, ' ')}
     </button>
   `).join('');
