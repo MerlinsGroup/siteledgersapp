@@ -105,7 +105,7 @@ function renderNavbar() {
   container.innerHTML = `
     <nav class="navbar">
       <div class="navbar__brand">
-        <a href="#/dashboard" class="navbar__logo">SiteLedgers</a>
+        <a href="#/dashboard" class="navbar__logo"><img src="/logo.png" alt="SiteLedgers" style="height:28px;width:auto;"></a>
       </div>
       <div class="navbar__links">
         ${navLinksHTML}

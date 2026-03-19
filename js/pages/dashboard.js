@@ -32,31 +32,28 @@ async function loadStats() {
   try {
     const { role, assignedProperties } = getState();
 
+    // Fetch properties
     const properties = await fetchAccessibleProperties();
     document.getElementById('stat-properties').textContent = properties.length;
 
-    // Open issues
+    // Fetch all issues in a single query (avoids composite index requirements)
+    const allIssues = await fetchCollection('issues');
+    const scoped = scopeIssues(allIssues, role, assignedProperties);
+
+    // Open issues (anything not verified or closed)
     const openStatuses = ['open', 'acknowledged', 'in_progress', 'resolved'];
-    const openIssues = await fetchCollection('issues', [
-      where('status', 'in', openStatuses),
-      limit(500),
-    ]);
-    const scopedOpen = scopeIssues(openIssues, role, assignedProperties);
-    document.getElementById('stat-open-issues').textContent = scopedOpen.length;
+    const openIssues = scoped.filter((i) => openStatuses.includes(i.status));
+    document.getElementById('stat-open-issues').textContent = openIssues.length;
 
     // Overdue
-    const overdue = scopedOpen.filter((i) => i.dueDate && isPast(i.dueDate));
+    const overdue = openIssues.filter((i) => i.dueDate && isPast(i.dueDate));
     document.getElementById('stat-overdue').textContent = overdue.length;
 
     // Resolved this month
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const allResolved = await fetchCollection('issues', [
-      where('status', 'in', ['verified', 'closed']),
-      limit(500),
-    ]);
-    const scopedResolved = scopeIssues(allResolved, role, assignedProperties);
-    const resolvedThisMonth = scopedResolved.filter((i) => {
+    const resolvedThisMonth = scoped.filter((i) => {
+      if (!['verified', 'closed'].includes(i.status)) return false;
       if (!i.resolvedAt) return false;
       const d = i.resolvedAt.toDate ? i.resolvedAt.toDate() : new Date(i.resolvedAt);
       return d >= startOfMonth;

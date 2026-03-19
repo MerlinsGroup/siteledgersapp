@@ -1,12 +1,1527 @@
-<div class="landing-hero">
-  <h1 class="landing-hero__title">Property Oversight & Accountability</h1>
-  <p class="landing-hero__text">
-    Track issues, manage inspections, and hold every party accountable —
-    from defect to resolution with a complete evidence trail.
-  </p>
-  <div style="display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center;">
-    <a href="#/signup" class="btn btn--primary btn--lg">Get Started</a>
-    <a href="#/pricing" class="btn btn--ghost btn--lg">View Plans</a>
-    <a href="#/login" class="btn btn--ghost btn--lg">Sign In</a>
+<style>
+  /* ─── Landing Page Scoped Styles ─────────────────────── */
+  .landing { overflow-x: hidden; }
+
+  /* NAV */
+  .landing-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+  }
+
+  .landing-nav.scrolled {
+    background: rgba(18, 24, 38, 0.92);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 2px 40px rgba(0,0,0,0.3);
+  }
+
+  .landing-nav .logo-img {
+    height: 32px;
+    width: auto;
+  }
+
+  .landing-nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    list-style: none;
+  }
+
+  .landing-nav-links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .landing-nav-links a:hover { color: #B7F34D; }
+
+  .landing-nav-cta {
+    background: #B7F34D !important;
+    color: #121826 !important;
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+  }
+
+  .landing-nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(183, 243, 77, 0.3);
+  }
+
+  /* HERO */
+  .l-hero {
+    min-height: 100vh;
+    background: #121826;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(183, 243, 77, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(183, 243, 77, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: lGridPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes lGridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .l-hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(183, 243, 77, 0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .l-hero-content {
+    text-align: center;
+    z-index: 2;
+    padding: 0 2rem;
+    max-width: 900px;
+  }
+
+  .l-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(183, 243, 77, 0.1);
+    border: 1px solid rgba(183, 243, 77, 0.2);
+    padding: 0.5rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #B7F34D;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: lFadeUp 0.8s 0.3s forwards;
+  }
+
+  .l-hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #B7F34D;
+    border-radius: 50%;
+    animation: lPulse 2s infinite;
+  }
+
+  @keyframes lPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  .l-hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: lFadeUp 0.8s 0.5s forwards;
+  }
+
+  .l-hero h1 .highlight {
+    color: #121826;
+    background: #B7F34D;
+    padding: 0 0.2em;
+    display: inline-block;
+    transform: rotate(-1deg);
+  }
+
+  .l-hero p {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: rgba(255,255,255,0.55);
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    opacity: 0;
+    animation: lFadeUp 0.8s 0.7s forwards;
+  }
+
+  .l-hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: lFadeUp 0.8s 0.9s forwards;
+  }
+
+  .l-btn-primary {
+    background: #B7F34D;
+    color: #121826;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.3s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .l-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(183, 243, 77, 0.3);
+    color: #121826;
+  }
+
+  .l-btn-secondary {
+    background: transparent;
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: border-color 0.3s, background 0.3s;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .l-btn-secondary:hover {
+    border-color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+  }
+
+  @keyframes lFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL INDICATOR */
+  .l-scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: lFadeUp 0.8s 1.2s forwards;
+  }
+
+  .l-scroll-indicator span {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 600;
+  }
+
+  .l-scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, #B7F34D, transparent);
+    animation: lScrollBounce 2s infinite;
+  }
+
+  @keyframes lScrollBounce {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.5); opacity: 0.3; }
+  }
+
+  /* SECTION LABEL */
+  .l-section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #6B7280;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+
+  .l-section-label.light { color: #95c93e; }
+
+  /* PROBLEM */
+  .l-problem {
+    padding: 8rem 2rem;
+    background: #F6F7FB;
+  }
+
+  .l-problem-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .l-problem h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #121826;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    max-width: 700px;
+    margin-bottom: 3.5rem;
+  }
+
+  .l-problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .l-problem-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .l-problem-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .l-problem-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(18, 24, 38, 0.08);
+  }
+
+  .l-problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: #EF4444;
+  }
+
+  .l-problem-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+  .l-problem-card h3 { font-size: 1.15rem; font-weight: 700; color: #121826; margin-bottom: 0.6rem; }
+  .l-problem-card p { color: #6B7280; font-size: 0.95rem; line-height: 1.6; }
+
+  /* PARALLAX */
+  .l-parallax {
+    height: 50vh;
+    min-height: 350px;
+    background: #121826;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-parallax-stripe {
+    position: absolute;
+    bottom: 0; left: -5%; right: -5%;
+    height: 40%;
+    background: #B7F34D;
+    transform: skewY(-3deg);
+    transform-origin: bottom right;
+    opacity: 0.06;
+  }
+
+  .l-parallax h2 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    text-align: center;
+    z-index: 2;
+    padding: 0 2rem;
+  }
+
+  .l-parallax h2 span { color: #B7F34D; }
+
+  /* FEATURES */
+  .l-features {
+    padding: 8rem 2rem;
+    background: #fff;
+  }
+
+  .l-features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .l-features h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #121826;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 1rem;
+  }
+
+  .l-features-inner > p.l-features-subtitle {
+    color: #6B7280;
+    font-size: 1.1rem;
+    max-width: 550px;
+    line-height: 1.7;
+    margin-bottom: 4rem;
+  }
+
+  .l-feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 6rem;
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  .l-feature-row.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .l-feature-row.reverse { direction: rtl; }
+  .l-feature-row.reverse > * { direction: ltr; }
+
+  .l-feature-visual {
+    background: #121826;
+    border-radius: 20px;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-status-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1.5rem;
+  }
+
+  .l-status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .l-status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .l-status-dot.red { background: #EF4444; }
+  .l-status-dot.amber { background: #F59E0B; }
+  .l-status-dot.green { background: #22C55E; }
+  .l-status-dot.lime { background: #B7F34D; }
+
+  .l-status-text {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .l-feature-info h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #121826;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .l-feature-info p {
+    color: #6B7280;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .l-feature-tag {
+    display: inline-block;
+    background: rgba(183, 243, 77, 0.15);
+    color: #95c93e;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* HOW IT WORKS */
+  .l-how {
+    padding: 8rem 2rem;
+    background: #121826;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-how::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(183,243,77,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .l-how-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .l-how h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+
+  .l-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    position: relative;
+  }
+
+  .l-steps::before {
+    content: '';
+    position: absolute;
+    top: 2.5rem;
+    left: 12.5%; right: 12.5%;
+    height: 2px;
+    background: linear-gradient(90deg, #B7F34D, rgba(183,243,77,0.1));
+  }
+
+  .l-step {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .l-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .l-step-number {
+    width: 50px; height: 50px;
+    background: #B7F34D;
+    color: #121826;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 auto 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .l-step h3 { color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .l-step p { color: rgba(255,255,255,0.45); font-size: 0.85rem; line-height: 1.6; }
+
+  /* STATS BAR */
+  .l-stats {
+    padding: 5rem 2rem;
+    background: #B7F34D;
+    overflow: hidden;
+  }
+
+  .l-stats-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .l-stat {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .l-stat.visible {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .l-stat-number {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #121826;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .l-stat-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(18, 24, 38, 0.6);
+  }
+
+  /* BUILT FOR */
+  .l-built-for {
+    padding: 8rem 2rem;
+    background: #F6F7FB;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .l-built-for h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #121826;
+    letter-spacing: -1px;
+    margin-bottom: 1.5rem;
+  }
+
+  .l-built-for > p {
+    color: #6B7280;
+    max-width: 500px;
+    margin: 0 auto 4rem;
+    line-height: 1.7;
+  }
+
+  .l-zoom-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .l-zoom-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s;
+  }
+
+  .l-zoom-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 60px rgba(18, 24, 38, 0.1);
+  }
+
+  .l-zoom-card-icon {
+    width: 56px; height: 56px;
+    background: rgba(183, 243, 77, 0.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .l-zoom-card h3 { font-size: 1.1rem; font-weight: 700; color: #121826; margin-bottom: 0.6rem; }
+  .l-zoom-card p { color: #6B7280; font-size: 0.9rem; line-height: 1.6; }
+
+  /* PRICING */
+  .l-pricing {
+    padding: 8rem 2rem;
+    background: #fff;
+  }
+
+  .l-pricing-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .l-pricing h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #121826;
+    letter-spacing: -1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .l-pricing-subtitle {
+    color: #6B7280;
+    font-size: 1.05rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .l-billing-toggle {
+    display: inline-flex;
+    background: #121826;
+    border-radius: 100px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 3rem;
+  }
+
+  .l-billing-btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 100px;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .l-billing-btn.active {
+    background: #B7F34D;
+    color: #121826;
+  }
+
+  .l-billing-badge {
+    font-size: 0.7rem;
+    background: rgba(183, 243, 77, 0.2);
+    color: #B7F34D;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-weight: 700;
+  }
+
+  .l-billing-btn.active .l-billing-badge {
+    background: rgba(18,24,38,0.15);
+    color: #121826;
+  }
+
+  .l-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .l-price-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .l-price-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(18,24,38,0.1);
+  }
+
+  .l-price-card.popular {
+    border-color: #B7F34D;
+    box-shadow: 0 0 0 1px #B7F34D, 0 4px 20px rgba(183,243,77,0.15);
+    z-index: 2;
+  }
+
+  .l-price-badge {
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: #B7F34D;
+    color: #121826;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .l-price-card h3 { font-size: 1.2rem; font-weight: 700; color: #121826; margin-bottom: 1rem; }
+
+  .l-price-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .l-price-amount .num {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #121826;
+    line-height: 1;
+  }
+
+  .l-price-amount .period {
+    font-size: 0.9rem;
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  .l-price-billing-note {
+    font-size: 0.8rem;
+    color: #9CA3AF;
+    margin-bottom: 1.25rem;
+  }
+
+  .l-price-trial {
+    background: rgba(183,243,77,0.12);
+    color: #7da832;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .l-price-cta {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .l-price-cta.primary {
+    background: #B7F34D;
+    color: #121826;
+  }
+
+  .l-price-cta.secondary {
+    background: #fff;
+    color: #2B3340;
+    border: 1px solid #E2E8F0;
+  }
+
+  .l-price-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .l-price-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .l-price-features li {
+    font-size: 0.9rem;
+    color: #2B3340;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+
+  .l-price-features li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: #7da832;
+    font-weight: 700;
+  }
+
+  .l-pricing-footer {
+    text-align: center;
+    margin-top: 3rem;
+    color: #6B7280;
+    font-size: 0.9rem;
+  }
+
+  .l-pricing-footer a { color: #95c93e; font-weight: 600; }
+
+  /* DEMO */
+  .l-demo {
+    padding: 6rem 2rem 4rem;
+    background: #F6F7FB;
+  }
+
+  .l-demo-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .l-demo-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .l-demo-header h2 {
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 800;
+    color: #121826;
+    letter-spacing: -1px;
+    margin-bottom: 1rem;
+  }
+
+  .l-demo-header p {
+    color: #6B7280;
+    font-size: 1.1rem;
+    max-width: 550px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .l-demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .l-demo-info {
+    padding: 2.5rem;
+    background: #121826;
+    border-radius: 20px;
+    color: #fff;
+  }
+
+  .l-demo-info h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -0.5px; color: #fff; }
+
+  .l-demo-benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .l-demo-benefit-icon {
+    width: 36px; height: 36px;
+    background: rgba(183,243,77,0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .l-demo-benefit h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; color: #fff; }
+  .l-demo-benefit p { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin: 0; }
+
+  .l-demo-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(183,243,77,0.1);
+    border: 1px solid rgba(183,243,77,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #B7F34D;
+    margin-top: 0.5rem;
+  }
+
+  .l-demo-calendly {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 660px;
+    border: 1px solid #E2E8F0;
+  }
+
+  .l-demo-calendly iframe {
+    width: 100%;
+    height: 660px;
+    border: none;
+  }
+
+  /* ABOUT */
+  .l-about {
+    padding: 8rem 2rem;
+    background: #F6F7FB;
+  }
+
+  .l-about-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .l-about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 5rem;
+  }
+
+  .l-about-text h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: #121826;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .l-about-text p { color: #6B7280; font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; }
+
+  .l-about-image {
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+
+  .l-about-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .l-sponsors {
+    text-align: center;
+    padding-top: 4rem;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .l-sponsors-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #6B7280;
+    margin-bottom: 2.5rem;
+    font-weight: 700;
+  }
+
+  .l-sponsor-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+  }
+
+  .l-sponsor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+  }
+
+  .l-sponsor-item:hover { opacity: 1; }
+
+  .l-sponsor-icon {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+
+  .l-sponsor-name { font-size: 0.8rem; font-weight: 700; color: #121826; }
+  .l-sponsor-type { font-size: 0.7rem; color: #6B7280; font-weight: 500; }
+
+  /* CTA */
+  .l-cta {
+    padding: 8rem 2rem;
+    background: #121826;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .l-cta-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(183,243,77,0.1) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .l-cta-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  .l-cta h2 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+
+  .l-cta h2 span { color: #B7F34D; }
+
+  .l-cta p {
+    color: rgba(255,255,255,0.45);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  .l-cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* FOOTER */
+  .l-footer {
+    background: #121826;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 3rem 2rem;
+  }
+
+  .l-footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .l-footer-logo { height: 24px; width: auto; }
+
+  .l-footer-copy {
+    color: rgba(255,255,255,0.25);
+    font-size: 0.8rem;
+  }
+
+  /* HAMBURGER */
+  .l-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+    z-index: 1001;
+  }
+
+  .l-hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .l-hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .l-hamburger.active span:nth-child(2) { opacity: 0; }
+  .l-hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .landing-nav { padding: 1rem 1.5rem; }
+    .l-hamburger { display: flex; }
+
+    .landing-nav-links {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(18, 24, 38, 0.97);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      z-index: 1000;
+    }
+
+    .landing-nav-links.open { display: flex; }
+    .landing-nav-links a { font-size: 1.2rem; }
+
+    .l-problem-grid { grid-template-columns: 1fr; }
+    .l-feature-row { grid-template-columns: 1fr; gap: 2rem; }
+    .l-feature-row.reverse { direction: ltr; }
+    .l-steps { grid-template-columns: 1fr 1fr; gap: 2rem 1rem; }
+    .l-steps::before { display: none; }
+    .l-stats-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+    .l-zoom-cards { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+    .l-pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    .l-about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .l-demo-grid { grid-template-columns: 1fr; }
+    .l-demo-calendly { min-height: 700px; }
+    .l-demo-calendly iframe { height: 700px; }
+    .l-footer-inner { flex-direction: column; gap: 1rem; }
+    .l-sponsor-logos { gap: 2rem; }
+  }
+</style>
+
+<div class="landing">
+
+<!-- NAV -->
+<nav class="landing-nav" id="landing-nav">
+  <img src="/logo.png" alt="SiteLedgers" class="logo-img">
+  <button class="l-hamburger" id="l-hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="landing-nav-links" id="l-nav-links">
+    <li><a href="#l-problem">The Problem</a></li>
+    <li><a href="#l-features">Features</a></li>
+    <li><a href="#l-how">How It Works</a></li>
+    <li><a href="#l-pricing">Plans</a></li>
+    <li><a href="#l-demo">Book a Demo</a></li>
+    <li><a href="#/login" class="landing-nav-cta">Login</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="l-hero">
+  <div class="l-hero-grid"></div>
+  <div class="l-hero-glow"></div>
+  <div class="l-hero-content">
+    <div class="l-hero-badge">Built for Construction & Property</div>
+    <h1>Every Visit.<br><span class="highlight">Time Stamped.</span></h1>
+    <p>Stop losing issues in WhatsApp. Track inspections, log problems, and prove every check — all from your phone.</p>
+    <div class="l-hero-buttons">
+      <a href="#/signup" class="l-btn-primary">Get Started Free</a>
+      <a href="#/login" class="l-btn-secondary">Login to App</a>
+      <a href="#l-features" class="l-btn-secondary">See How It Works</a>
+    </div>
   </div>
+  <div class="l-scroll-indicator">
+    <span>Scroll</span>
+    <div class="l-scroll-line"></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="l-problem" id="l-problem">
+  <div class="l-problem-inner">
+    <div class="l-section-label">The problem</div>
+    <h2>Your team is losing track of what's happening on site.</h2>
+    <div class="l-problem-grid">
+      <div class="l-problem-card">
+        <div class="icon">💬</div>
+        <h3>Issues Lost in WhatsApp</h3>
+        <p>Photos, updates, and decisions buried in group chats nobody scrolls back through.</p>
+      </div>
+      <div class="l-problem-card">
+        <div class="icon">📸</div>
+        <h3>Photos Stuck on Phones</h3>
+        <p>Evidence sitting in someone's camera roll. No tags, no dates, no idea which site it's from.</p>
+      </div>
+      <div class="l-problem-card">
+        <div class="icon">📋</div>
+        <h3>No Proof of Inspections</h3>
+        <p>When insurance or compliance ask for records, you've got nothing to show them.</p>
+      </div>
+      <div class="l-problem-card">
+        <div class="icon">⏱️</div>
+        <h3>Delays Cost You Money</h3>
+        <p>Issues reported late, contractors chasing updates, jobs dragging on longer than they should.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX -->
+<div class="l-parallax">
+  <div class="l-parallax-stripe"></div>
+  <h2>Track issues properly.<br><span>Prove it happened.</span></h2>
+</div>
+
+<!-- FEATURES -->
+<section class="l-features" id="l-features">
+  <div class="l-features-inner">
+    <div class="l-section-label">What you get</div>
+    <h2>Simple tools that actually get used on site.</h2>
+    <p class="l-features-subtitle">No training manuals. No complicated setup. Just open the app and start logging.</p>
+
+    <div class="l-feature-row">
+      <div class="l-feature-visual">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&h=525&fit=crop" alt="Construction site inspection" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div class="l-feature-info">
+        <h3>Photo-First Issue Tracking</h3>
+        <p>Take a photo. Tag the location. It gets timestamped, geotagged, and assigned automatically. Your contractor gets a notification. That's it.</p>
+        <span class="l-feature-tag">Auto Timestamp</span>
+        <span class="l-feature-tag">Geo-Tag</span>
+        <span class="l-feature-tag">Assign Contractor</span>
+      </div>
+    </div>
+
+    <div class="l-feature-row reverse">
+      <div class="l-feature-visual">
+        <div class="l-status-stack">
+          <div class="l-status-item">
+            <div class="l-status-dot red"></div>
+            <span class="l-status-text">Reported — Broken window, Unit 4B</span>
+          </div>
+          <div class="l-status-item">
+            <div class="l-status-dot amber"></div>
+            <span class="l-status-text">Assigned — J. Clarke Builders</span>
+          </div>
+          <div class="l-status-item">
+            <div class="l-status-dot green"></div>
+            <span class="l-status-text">Completed — Photo verified</span>
+          </div>
+          <div class="l-status-item">
+            <div class="l-status-dot lime"></div>
+            <span class="l-status-text">Closed — Signed off 12/03</span>
+          </div>
+        </div>
+      </div>
+      <div class="l-feature-info">
+        <h3>Clear Status at a Glance</h3>
+        <p>Every issue moves through simple stages: Reported, Assigned, In Progress, Completed, Verified. No confusion. No chasing people for updates.</p>
+        <span class="l-feature-tag">Live Status</span>
+        <span class="l-feature-tag">Full History</span>
+      </div>
+    </div>
+
+    <div class="l-feature-row">
+      <div class="l-feature-visual">
+        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=700&h=525&fit=crop" alt="Building construction site" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <div class="l-feature-info">
+        <h3>Empty Unit Security Checks</h3>
+        <p>Set recurring inspections every 7, 14, or 30 days. Checklist-based. Photo required. A proper audit trail for insurance and compliance.</p>
+        <span class="l-feature-tag">Recurring Schedule</span>
+        <span class="l-feature-tag">Photo Proof</span>
+        <span class="l-feature-tag">Audit Trail</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="l-how" id="l-how">
+  <div class="l-how-inner">
+    <div class="l-section-label light" style="text-align:center;">How it works</div>
+    <h2>Four steps. That's it.</h2>
+    <div class="l-steps">
+      <div class="l-step">
+        <div class="l-step-number">1</div>
+        <h3>Open the App</h3>
+        <p>No login drama. Quick access on any phone.</p>
+      </div>
+      <div class="l-step">
+        <div class="l-step-number">2</div>
+        <h3>Snap a Photo</h3>
+        <p>Auto-tagged with time, date, and location.</p>
+      </div>
+      <div class="l-step">
+        <div class="l-step-number">3</div>
+        <h3>Assign & Track</h3>
+        <p>Pick a contractor. Set a deadline. They get notified.</p>
+      </div>
+      <div class="l-step">
+        <div class="l-step-number">4</div>
+        <h3>Proof. Sorted.</h3>
+        <p>Full audit trail. Ready for compliance, insurance, or your own peace of mind.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="l-stats">
+  <div class="l-stats-inner">
+    <div class="l-stat">
+      <div class="l-stat-number" data-target="73" data-suffix="%">73%</div>
+      <div class="l-stat-label">of site issues are tracked in WhatsApp</div>
+    </div>
+    <div class="l-stat">
+      <div class="l-stat-number" data-target="5" data-suffix="x">5x</div>
+      <div class="l-stat-label">faster issue resolution with proper logging</div>
+    </div>
+    <div class="l-stat">
+      <div class="l-stat-number" data-target="0" data-suffix="">0</div>
+      <div class="l-stat-label">missed inspections with auto reminders</div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILT FOR -->
+<section class="l-built-for">
+  <div class="l-section-label">Built for</div>
+  <h2>Your kind of operation.</h2>
+  <p>Whether you manage 5 units or 50 sites, SiteLedgers keeps everything visible.</p>
+  <div class="l-zoom-cards">
+    <div class="l-zoom-card">
+      <div class="l-zoom-card-icon">🏗️</div>
+      <h3>Site Managers</h3>
+      <p>Track every issue across every site. No more spreadsheets.</p>
+    </div>
+    <div class="l-zoom-card">
+      <div class="l-zoom-card-icon">🏠</div>
+      <h3>Landlords</h3>
+      <p>Prove inspections. Protect your assets. Keep insurance happy.</p>
+    </div>
+    <div class="l-zoom-card">
+      <div class="l-zoom-card-icon">📐</div>
+      <h3>Surveyors</h3>
+      <p>Structured reports. Photo evidence. Professional audit trail.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="l-pricing" id="l-pricing">
+  <div class="l-pricing-inner">
+    <div class="l-section-label">Pricing</div>
+    <h2>Simple, transparent pricing.</h2>
+    <p class="l-pricing-subtitle">Per user, per month. Minimum 3 users. Cancel anytime.</p>
+
+    <div class="l-billing-toggle">
+      <button class="l-billing-btn active" data-billing="monthly">Monthly</button>
+      <button class="l-billing-btn" data-billing="annual">Annual <span class="l-billing-badge">Save 18%</span></button>
+    </div>
+
+    <div class="l-pricing-grid" id="l-pricing-grid">
+      <!-- Rendered by landing.js -->
+    </div>
+
+    <div class="l-pricing-footer">
+      <p>All plans include SSL encryption, daily backups, and 99.9% uptime SLA.</p>
+      <p>Need more than 40 users? <a href="#/contact">Contact us</a> for a custom quote.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK A DEMO -->
+<section class="l-demo" id="l-demo">
+  <div class="l-demo-inner">
+    <div class="l-demo-header">
+      <div class="l-section-label">Book a demo</div>
+      <h2>See SiteLedgers in action.</h2>
+      <p>Pick a time that works for you. We'll walk through the platform, answer your questions, and show you how it fits your sites.</p>
+    </div>
+    <div class="l-demo-grid">
+      <div class="l-demo-info">
+        <h3>What you'll get</h3>
+        <div class="l-demo-benefit">
+          <div class="l-demo-benefit-icon">📱</div>
+          <div>
+            <h4>Live Platform Walkthrough</h4>
+            <p>See exactly how your team would use SiteLedgers on site, from logging issues to generating reports.</p>
+          </div>
+        </div>
+        <div class="l-demo-benefit">
+          <div class="l-demo-benefit-icon">💬</div>
+          <div>
+            <h4>Q&A With Our Team</h4>
+            <p>Ask anything — pricing, integrations, rollout. No sales pitch, just honest answers.</p>
+          </div>
+        </div>
+        <div class="l-demo-benefit">
+          <div class="l-demo-benefit-icon">🎯</div>
+          <div>
+            <h4>Custom Setup Advice</h4>
+            <p>We'll map out how SiteLedgers works for your specific type of sites and team size.</p>
+          </div>
+        </div>
+        <div class="l-demo-duration">⏱ 20 minutes · No commitment</div>
+      </div>
+      <div class="l-demo-calendly">
+        <iframe src="https://calendly.com/merlinsgroup/siteledgers" title="Book a demo with SiteLedgers" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="l-about" id="l-about">
+  <div class="l-about-inner">
+    <div class="l-section-label">About SiteLedgers</div>
+    <div class="l-about-grid">
+      <div class="l-about-text">
+        <h2>Born on building sites, not in boardrooms.</h2>
+        <p>SiteLedgers started from a simple problem: a site manager juggling 12 WhatsApp groups, a shared Google Drive that nobody updated, and an insurance claim that nearly fell through because there was no proof of inspection.</p>
+        <p>We built SiteLedgers to close that gap — a tool designed by people who actually walk sites, not just people who design software. Every feature exists because someone in hi-vis asked for it.</p>
+        <p>Backed by organisations that understand the built environment, SiteLedgers is being developed in partnership with industry leaders in healthcare estates, education facilities, and design consultancy.</p>
+      </div>
+      <div class="l-about-image">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=700&h=525&fit=crop" alt="Site inspection team reviewing building work">
+      </div>
+    </div>
+    <div class="l-sponsors">
+      <div class="l-sponsors-label">Supported & Sponsored By</div>
+      <div class="l-sponsor-logos">
+        <div class="l-sponsor-item">
+          <div class="l-sponsor-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="6" width="22" height="16" rx="3" stroke="#121826" stroke-width="2"/><path d="M3 10h22" stroke="#121826" stroke-width="2"/><circle cx="8" cy="18" r="1.5" fill="#121826"/></svg>
+          </div>
+          <span class="l-sponsor-name">BordoDesign</span>
+          <span class="l-sponsor-type">Design Consultancy</span>
+        </div>
+        <div class="l-sponsor-item">
+          <div class="l-sponsor-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4l2-4z" fill="#005EB8"/><path d="M6 16h16v6a2 2 0 01-2 2H8a2 2 0 01-2-2v-6z" fill="#005EB8" opacity="0.3"/></svg>
+          </div>
+          <span class="l-sponsor-name">NHS</span>
+          <span class="l-sponsor-type">Healthcare Estates</span>
+        </div>
+        <div class="l-sponsor-item">
+          <div class="l-sponsor-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3L4 10v2h20v-2L14 3z" stroke="#121826" stroke-width="2" fill="none"/><rect x="7" y="12" width="3" height="10" rx="0.5" stroke="#121826" stroke-width="1.5" fill="none"/><rect x="12.5" y="12" width="3" height="10" rx="0.5" stroke="#121826" stroke-width="1.5" fill="none"/><rect x="18" y="12" width="3" height="10" rx="0.5" stroke="#121826" stroke-width="1.5" fill="none"/><rect x="4" y="22" width="20" height="2.5" rx="1" fill="#121826"/></svg>
+          </div>
+          <span class="l-sponsor-name">Oxford College</span>
+          <span class="l-sponsor-type">University</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="l-cta">
+  <div class="l-cta-glow"></div>
+  <div class="l-cta-inner">
+    <div class="l-section-label light">Get started</div>
+    <h2>Stop losing issues.<br><span>Start proving checks.</span></h2>
+    <p>Simple tools built for people who work on site, not behind a desk.</p>
+    <div class="l-cta-buttons">
+      <a href="#/signup" class="l-btn-primary">Create Free Account</a>
+      <a href="#/login" class="l-btn-secondary">Login</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="l-footer">
+  <div class="l-footer-inner">
+    <img src="/logo.png" alt="SiteLedgers" class="l-footer-logo">
+    <div class="l-footer-copy">&copy; 2026 SiteLedgers. All rights reserved.</div>
+  </div>
+</footer>
+
 </div>
