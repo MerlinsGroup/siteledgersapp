@@ -12,7 +12,7 @@ import { canAccessPage } from './roles.js';
 const routes = {
   // Public pages
   '/':              { page: 'pages/public/landing.html',          script: null,                            auth: false,  title: 'SiteLedgers — Property Oversight & Accountability' },
-  '/login':         { page: 'pages/public/login.html',            script: null,                            auth: false,  title: 'Sign In — SiteLedgers' },
+  '/login':         { page: 'pages/public/login.html',            script: 'js/pages/login.js',             auth: false,  title: 'Sign In — SiteLedgers' },
   '/contact':       { page: 'pages/public/contact.html',          script: null,                            auth: false,  title: 'Contact Us — SiteLedgers' },
 
   // Authenticated app pages

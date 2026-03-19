@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiteLedgers — Seed Owner Account</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 500px; margin: 60px auto; padding: 20px; }
+    h1 { font-size: 1.5rem; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    input { width: 100%; padding: 8px 12px; font-size: 16px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+    button { padding: 10px 24px; background: #1e40af; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+    button:disabled { opacity: 0.5; }
+    .status { margin-top: 16px; padding: 12px; border-radius: 6px; font-size: 14px; }
+    .status--success { background: #d1fae5; color: #065f46; }
+    .status--error { background: #fef2f2; color: #991b1b; }
+    .status--info { background: #dbeafe; color: #1e40af; }
+    .warning { background: #fef9c3; color: #854d0e; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>SiteLedgers — Create Owner Account</h1>
+  <p class="warning">
+    Run this <strong>once</strong> to create your organisation and first owner account.
+    Delete this file after use.
+  </p>
+
+  <form id="seed-form">
+    <div class="form-group">
+      <label>Organisation Name</label>
+      <input type="text" id="org-name" value="My Organisation" required>
+    </div>
+    <div class="form-group">
+      <label>Your Full Name</label>
+      <input type="text" id="owner-name" required placeholder="John Smith">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="owner-email" required placeholder="you@company.com">
+    </div>
+    <div class="form-group">
+      <label>Password (min 6 characters)</label>
+      <input type="password" id="owner-password" required minlength="6" placeholder="Choose a password">
+    </div>
+    <button type="submit" id="seed-btn">Create Owner Account</button>
+  </form>
+
+  <div id="status"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
+    import firebaseConfig from './js/firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const statusEl = document.getElementById('status');
+
+    function showStatus(msg, type) {
+      statusEl.innerHTML = `<div class="status status--${type}">${msg}</div>`;
+    }
+
+    document.getElementById('seed-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('seed-btn');
+      btn.disabled = true;
+
+      const orgName = document.getElementById('org-name').value.trim();
+      const name = document.getElementById('owner-name').value.trim();
+      const email = document.getElementById('owner-email').value.trim();
+      const password = document.getElementById('owner-password').value;
+
+      if (!orgName || !name || !email || !password) {
+        showStatus('All fields are required.', 'error');
+        btn.disabled = false;
+        return;
+      }
+
+      try {
+        showStatus('Creating auth account...', 'info');
+
+        // 1. Create Firebase Auth user
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = credential.user.uid;
+
+        showStatus('Creating organisation...', 'info');
+
+        // 2. Create organisation document
+        const orgId = uid + '_org'; // Simple org ID based on owner UID
+        await setDoc(doc(db, 'organisations', orgId), {
+          name: orgName,
+          ownerId: uid,
+          createdAt: serverTimestamp(),
+        });
+
+        // 3. Create user document under the org
+        await setDoc(doc(db, 'organisations', orgId, 'users', uid), {
+          id: uid,
+          email: email,
+          name: name,
+          phone: '',
+          role: 'owner',
+          company: '',
+          avatarUrl: null,
+          assignedProperties: [],
+          hasAppAccess: true,
+          status: 'active',
+          notificationPrefs: {
+            emailOnAssignment: true,
+            emailOnOverdue: true,
+            emailOnStatusChange: true,
+          },
+          createdAt: serverTimestamp(),
+          createdBy: uid,
+          lastLoginAt: serverTimestamp(),
+        });
+
+        // 4. Create userOrgs lookup
+        await setDoc(doc(db, 'userOrgs', uid), {
+          orgId: orgId,
+          role: 'owner',
+        });
+
+        showStatus(
+          `<strong>Account created successfully!</strong><br><br>` +
+          `Organisation: <strong>${orgName}</strong><br>` +
+          `Org ID: <code>${orgId}</code><br>` +
+          `Email: <strong>${email}</strong><br>` +
+          `Role: <strong>Owner</strong><br><br>` +
+          `You can now <a href="index.html#/login">sign in to SiteLedgers</a>.<br><br>` +
+          `<em>Delete this seed.html file when done.</em>`,
+          'success'
+        );
+
+      } catch (err) {
+        console.error(err);
+        showStatus('Error: ' + err.message, 'error');
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

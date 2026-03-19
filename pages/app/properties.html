@@ -1,1 +1,65 @@
-<\!-- SiteLedgers: properties -->
+<div class="page">
+  <div class="page-header">
+    <h1>Properties</h1>
+    <button id="add-property-btn" class="btn btn--primary" data-permission="property_create">Add Property</button>
+  </div>
+
+  <!-- Search / filter bar -->
+  <div class="mb-6">
+    <input type="text" id="property-search" class="form-input" placeholder="Search properties by name or address...">
+  </div>
+
+  <!-- Properties grid -->
+  <div id="properties-list" class="grid grid--2">
+    <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+  </div>
+
+  <!-- Empty state (hidden by default) -->
+  <div id="properties-empty" class="empty-state" style="display:none;">
+    <div class="empty-state__title">No properties yet</div>
+    <p class="empty-state__text">Add your first property to get started.</p>
+    <button id="add-property-empty-btn" class="btn btn--primary" data-permission="property_create">Add Property</button>
+  </div>
+</div>
+
+<!-- Add Property Modal -->
+<div id="add-property-modal" class="modal-backdrop" style="display:none;">
+  <div class="modal">
+    <div class="modal__header">
+      <h3 class="modal__title">Add Property</h3>
+      <button class="modal__close" id="close-property-modal">&times;</button>
+    </div>
+    <form id="add-property-form" novalidate>
+      <div class="modal__body">
+        <div class="form-group">
+          <label for="prop-name">Property Name</label>
+          <input type="text" id="prop-name" name="name" class="form-input" placeholder="e.g. Riverside Apartments" required>
+          <div class="field-error" data-field="name"></div>
+        </div>
+        <div class="form-group">
+          <label for="prop-address">Address</label>
+          <input type="text" id="prop-address" name="address" class="form-input" placeholder="Full address" required>
+          <div class="field-error" data-field="address"></div>
+        </div>
+        <div class="form-group">
+          <label for="prop-type">Property Type</label>
+          <select id="prop-type" name="type" class="form-select">
+            <option value="residential">Residential</option>
+            <option value="commercial">Commercial</option>
+            <option value="mixed">Mixed Use</option>
+            <option value="industrial">Industrial</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="prop-description">Description (optional)</label>
+          <textarea id="prop-description" name="description" class="form-textarea" rows="3" placeholder="Brief description of the property"></textarea>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" id="cancel-property-btn" class="btn btn--secondary">Cancel</button>
+        <button type="submit" id="save-property-btn" class="btn btn--primary">Add Property</button>
+      </div>
+    </form>
+  </div>
+</div>

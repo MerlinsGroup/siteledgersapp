@@ -1,1 +1,63 @@
-<!-- SiteLedgers: dashboard -->
+<div class="page">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stats-row" id="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-card__label">Properties</div>
+      <div class="stat-card__value" id="stat-properties">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Open Issues</div>
+      <div class="stat-card__value stat-card__value--danger" id="stat-open-issues">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Overdue</div>
+      <div class="stat-card__value stat-card__value--warning" id="stat-overdue">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__label">Resolved This Month</div>
+      <div class="stat-card__value stat-card__value--success" id="stat-resolved">—</div>
+    </div>
+  </div>
+
+  <!-- Recent issues -->
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header">
+        <h3 class="card__title">Recent Issues</h3>
+        <a href="#/issues/new" class="btn btn--primary btn--sm" data-permission="issue_create">Log Issue</a>
+      </div>
+      <div id="recent-issues">
+        <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Properties overview -->
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header">
+        <h3 class="card__title">Properties</h3>
+        <a href="#/properties" class="btn btn--secondary btn--sm">View All</a>
+      </div>
+      <div id="dashboard-properties">
+        <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent activity -->
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header">
+        <h3 class="card__title">Recent Activity</h3>
+      </div>
+      <div id="recent-activity">
+        <div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
