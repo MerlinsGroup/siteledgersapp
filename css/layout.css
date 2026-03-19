@@ -1,5 +1,6 @@
 /* SiteLedgers — Layout Styles
-   Navbar, page containers, and responsive grid. */
+   Navbar, page containers, and responsive grid.
+   Dark charcoal navbar with lime accent. */
 
 /* ─── App Container ────────────────────────────────────── */
 
@@ -14,11 +15,11 @@
   align-items: center;
   height: var(--navbar-height);
   padding: 0 var(--space-6);
-  background-color: var(--color-white);
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--color-charcoal);
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 }
 
 .navbar__brand {
@@ -27,14 +28,17 @@
 }
 
 .navbar__logo {
+  font-family: var(--font-mono);
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  font-weight: 700;
+  color: #fff;
   text-decoration: none;
+  letter-spacing: -0.5px;
 }
 
 .navbar__logo:hover {
   text-decoration: none;
+  color: #fff;
 }
 
 .navbar__links {
@@ -47,7 +51,7 @@
 .nav-link {
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  color: var(--color-gray-600);
+  color: rgba(255, 255, 255, 0.6);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   text-decoration: none;
@@ -55,19 +59,20 @@
 }
 
 .nav-link:hover {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-900);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
   text-decoration: none;
 }
 
 .nav-link--active {
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-charcoal);
+  font-weight: var(--font-weight-bold);
 }
 
 .nav-link--active:hover {
-  background-color: var(--color-primary-dark);
-  color: var(--color-white);
+  background-color: var(--color-primary-dim);
+  color: var(--color-charcoal);
 }
 
 .navbar__user {
@@ -81,13 +86,17 @@
 .navbar__user-name {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar__user-name:hover {
+  color: var(--color-primary);
 }
 
 .navbar__mobile-toggle {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   background: none;
   border: none;
   padding: var(--space-2);
@@ -96,10 +105,11 @@
 
 .navbar__mobile-toggle span {
   display: block;
-  width: 20px;
+  width: 22px;
   height: 2px;
-  background-color: var(--color-gray-600);
-  border-radius: 1px;
+  background-color: #fff;
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 /* ─── Page Layout ──────────────────────────────────────── */
@@ -107,14 +117,14 @@
 .page {
   max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: var(--space-6);
+  padding: var(--space-8) var(--space-6);
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
   flex-wrap: wrap;
   gap: var(--space-4);
 }
@@ -146,7 +156,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 /* ─── Responsive ───────────────────────────────────────── */
@@ -154,19 +164,26 @@
 @media (max-width: 768px) {
   .navbar__links {
     display: none;
-    position: absolute;
-    top: var(--navbar-height);
+    position: fixed;
+    top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     flex-direction: column;
-    background: var(--color-white);
-    border-bottom: 1px solid var(--border-color);
-    padding: var(--space-4);
-    box-shadow: var(--shadow-md);
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    background: rgba(18, 24, 38, 0.97);
+    backdrop-filter: blur(20px);
+    z-index: 999;
   }
 
   .navbar__links--open {
     display: flex;
+  }
+
+  .navbar__links--open .nav-link {
+    font-size: var(--font-size-lg);
   }
 
   .navbar__user-name {
@@ -178,7 +195,7 @@
   }
 
   .page {
-    padding: var(--space-4);
+    padding: var(--space-6) var(--space-4);
   }
 
   .page-header {
@@ -193,7 +210,7 @@
 
 @media (max-width: 480px) {
   .page {
-    padding: var(--space-3);
+    padding: var(--space-4) var(--space-3);
   }
 
   .stats-row {

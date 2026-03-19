@@ -1,5 +1,6 @@
 /* SiteLedgers — Page-Specific Styles
-   Styles for login, dashboard, and other specific pages. */
+   Login, landing, dashboard, property cards, issue rows.
+   Charcoal + Lime design system. */
 
 /* ─── Login Page ───────────────────────────────────────── */
 
@@ -8,25 +9,31 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: var(--color-gray-50);
+  background: var(--color-charcoal);
   padding: var(--space-4);
 }
 
 .login-card {
   background: var(--color-white);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   padding: var(--space-8);
   width: 100%;
   max-width: 400px;
 }
 
 .login-card__logo {
+  font-family: var(--font-mono);
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  font-weight: 700;
+  color: var(--color-charcoal);
   text-align: center;
   margin-bottom: var(--space-2);
+  letter-spacing: -0.5px;
+}
+
+.login-card__logo span {
+  color: var(--color-primary);
 }
 
 .login-card__subtitle {
@@ -44,18 +51,25 @@
   display: block;
   text-align: right;
   font-size: var(--font-size-xs);
-  color: var(--color-primary);
+  color: var(--color-primary-dim);
   margin-top: var(--space-2);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.login-card__forgot:hover {
+  color: var(--color-primary-dark);
 }
 
 .login-card__error {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.08);
   color: #991b1b;
   font-size: var(--font-size-sm);
   padding: var(--space-3);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
   display: none;
+  border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
 /* ─── Landing Page ─────────────────────────────────────── */
@@ -68,21 +82,30 @@
   text-align: center;
   min-height: 80vh;
   padding: var(--space-8);
+  background: var(--color-charcoal);
+  color: var(--color-white);
 }
 
 .landing-hero__title {
   font-size: 2.5rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-white);
   margin-bottom: var(--space-4);
   max-width: 600px;
+  letter-spacing: -0.5px;
+  line-height: var(--line-height-tight);
+}
+
+.landing-hero__title span {
+  color: var(--color-primary);
 }
 
 .landing-hero__text {
   font-size: var(--font-size-lg);
-  color: var(--color-gray-500);
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: var(--space-8);
   max-width: 500px;
+  line-height: var(--line-height-normal);
 }
 
 /* ─── Dashboard ────────────────────────────────────────── */
@@ -95,7 +118,7 @@
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-4);
-  color: var(--color-gray-800);
+  color: var(--color-charcoal);
 }
 
 /* ─── Property Card ────────────────────────────────────── */
@@ -103,6 +126,13 @@
 .property-card {
   display: flex;
   gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  transition: background-color var(--transition-fast);
+}
+
+.property-card:hover {
+  background-color: var(--color-gray-50);
 }
 
 .property-card__image {
@@ -121,7 +151,7 @@
 
 .property-card__name {
   font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
+  color: var(--color-charcoal);
   margin-bottom: var(--space-1);
 }
 
@@ -138,14 +168,25 @@
   color: var(--color-gray-500);
 }
 
+.property-card__stats strong {
+  color: var(--color-charcoal);
+  font-weight: var(--font-weight-semibold);
+}
+
 /* ─── Issue Row ────────────────────────────────────────── */
 
 .issue-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-gray-100);
+  transition: background-color var(--transition-fast);
+  border-radius: var(--radius-md);
+}
+
+.issue-row:hover {
+  background-color: var(--color-gray-50);
 }
 
 .issue-row:last-child {
@@ -156,10 +197,64 @@
   flex: 1;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-800);
+  color: var(--color-charcoal);
 }
 
 .issue-row__meta {
   font-size: var(--font-size-xs);
   color: var(--color-gray-400);
+}
+
+/* ─── Activity Feed ───────────────────────────────────── */
+
+.activity-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+  font-size: var(--font-size-sm);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-item__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+}
+
+.activity-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-item__text {
+  color: var(--color-graphite);
+  line-height: var(--line-height-normal);
+}
+
+.activity-item__time {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  margin-top: var(--space-1);
+}
+
+/* ─── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: var(--space-6);
+  }
+
+  .landing-hero__title {
+    font-size: 1.75rem;
+  }
 }
