@@ -6,14 +6,17 @@
 
 import {
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  sendEmailVerification,
 } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js';
 
 import {
   doc,
   getDoc,
+  setDoc,
   updateDoc,
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
@@ -32,6 +35,11 @@ async function login(email, password) {
   try {
     const credential = await signInWithEmailAndPassword(auth, email, password);
     const uid = credential.user.uid;
+
+    // Check email verification
+    if (!credential.user.emailVerified) {
+      return { success: false, error: 'EMAIL_NOT_VERIFIED' };
+    }
 
     // Load org mapping and user profile into state
     const loaded = await loadUserSession(uid);
@@ -88,11 +96,12 @@ async function resetPassword(email) {
 function initAuth() {
   return new Promise((resolve) => {
     onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
+      if (firebaseUser && firebaseUser.emailVerified) {
         await loadUserSession(firebaseUser.uid);
-      } else {
+      } else if (!firebaseUser) {
         clearState();
       }
+      // If firebaseUser exists but not verified, leave state cleared
       setState({ initialized: true });
       resolve();
     });
@@ -153,6 +162,105 @@ async function loadUserSession(uid) {
   }
 }
 
+// ─── Signup ──────────────────────────────────────────────
+
+/**
+ * Create a new account with org. Sends email verification.
+ * Handles the case where Auth account exists but Firestore docs are missing.
+ * Returns { success: true } or { success: false, error: string }.
+ */
+async function signup(email, password, name, orgName) {
+  try {
+    let uid;
+
+    // 1. Create Firebase Auth user (or sign in if already exists)
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      uid = credential.user.uid;
+    } catch (authErr) {
+      if (authErr.code === 'auth/email-already-in-use') {
+        // Auth account exists — sign in to get uid and repair Firestore docs
+        try {
+          const credential = await signInWithEmailAndPassword(auth, email, password);
+          uid = credential.user.uid;
+        } catch (signInErr) {
+          return { success: false, error: friendlyAuthError(signInErr.code) };
+        }
+      } else {
+        return { success: false, error: friendlyAuthError(authErr.code) };
+      }
+    }
+
+    // 2. Send verification email
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    }
+
+    // 3. Create Firestore documents (org, user, userOrgs)
+    const orgId = uid + '_org';
+
+    await setDoc(doc(db, 'organisations', orgId), {
+      name: orgName,
+      ownerId: uid,
+      createdAt: serverTimestamp(),
+    });
+
+    await setDoc(doc(db, 'organisations', orgId, 'users', uid), {
+      id: uid,
+      email: email,
+      name: name,
+      phone: '',
+      role: 'owner',
+      company: '',
+      avatarUrl: null,
+      assignedProperties: [],
+      hasAppAccess: true,
+      status: 'active',
+      notificationPrefs: {
+        emailOnAssignment: true,
+        emailOnOverdue: true,
+        emailOnStatusChange: true,
+      },
+      createdAt: serverTimestamp(),
+      createdBy: uid,
+      lastLoginAt: serverTimestamp(),
+    });
+
+    await setDoc(doc(db, 'userOrgs', uid), {
+      orgId: orgId,
+      role: 'owner',
+    });
+
+    // Don't sign out — keep auth.currentUser available for resendVerification
+    // initAuth guard prevents unverified users from accessing protected pages
+
+    return { success: true };
+  } catch (err) {
+    console.error('Signup error:', err);
+    return { success: false, error: err.message || 'An error occurred during signup.' };
+  }
+}
+
+// ─── Resend Verification ─────────────────────────────────
+
+/**
+ * Resend the email verification link to the current auth user.
+ */
+async function resendVerification() {
+  try {
+    if (!auth.currentUser) {
+      return { success: false, error: 'No signed-in user. Please sign up again.' };
+    }
+    await sendEmailVerification(auth.currentUser);
+    return { success: true };
+  } catch (err) {
+    if (err.code === 'auth/too-many-requests') {
+      return { success: false, error: 'Too many requests. Please wait a moment and try again.' };
+    }
+    return { success: false, error: 'Unable to send verification email. Please try again.' };
+  }
+}
+
 // ─── Helpers ────────────────────────────────────────────
 
 /**
@@ -167,8 +275,10 @@ function friendlyAuthError(code) {
     'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.',
     'auth/invalid-credential': 'Invalid email or password.',
     'auth/network-request-failed': 'Network error. Check your connection and try again.',
+    'auth/email-already-in-use': 'An account with this email already exists.',
+    'auth/weak-password': 'Password must be at least 6 characters.',
   };
   return messages[code] || 'An error occurred. Please try again.';
 }
 
-export { login, logout, resetPassword, initAuth };
+export { login, logout, resetPassword, signup, resendVerification, initAuth };

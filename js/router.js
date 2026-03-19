@@ -13,6 +13,8 @@ const routes = {
   // Public pages
   '/':              { page: 'pages/public/landing.html',          script: null,                            auth: false,  title: 'SiteLedgers — Property Oversight & Accountability' },
   '/login':         { page: 'pages/public/login.html',            script: 'js/pages/login.js',             auth: false,  title: 'Sign In — SiteLedgers' },
+  '/signup':        { page: 'pages/public/signup.html',           script: 'js/pages/signup.js',            auth: false,  title: 'Create Account — SiteLedgers' },
+  '/verify-email':  { page: 'pages/public/verify-email.html',     script: 'js/pages/verify-email.js',      auth: false,  title: 'Verify Email — SiteLedgers' },
   '/contact':       { page: 'pages/public/contact.html',          script: null,                            auth: false,  title: 'Contact Us — SiteLedgers' },
 
   // Authenticated app pages
@@ -110,8 +112,8 @@ async function handleRouteChange() {
     return;
   }
 
-  // If already authenticated and trying to visit login, redirect to dashboard
-  if (path === '/login' && isAuthenticated()) {
+  // If already authenticated and trying to visit public auth pages, redirect to dashboard
+  if (['/login', '/signup', '/verify-email'].includes(path) && isAuthenticated()) {
     navigateTo('/dashboard');
     return;
   }

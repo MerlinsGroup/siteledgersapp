@@ -34,6 +34,8 @@ export function init() {
 
     if (result.success) {
       navigateTo('/dashboard');
+    } else if (result.error === 'EMAIL_NOT_VERIFIED') {
+      navigateTo('/verify-email');
     } else {
       loginError.textContent = result.error;
       loginError.style.display = '';

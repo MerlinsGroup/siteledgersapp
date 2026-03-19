@@ -72,6 +72,36 @@
   border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
+.login-card__footer {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin-top: var(--space-5);
+}
+
+.login-card__footer a {
+  color: var(--color-primary-dim);
+  font-weight: var(--font-weight-semibold);
+}
+
+.login-card__footer a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* ─── Verify Email Page ───────────────────────────────── */
+
+.verify-email__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.verify-email__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  line-height: var(--line-height-normal);
+  margin-bottom: var(--space-6);
+}
+
 /* ─── Landing Page ─────────────────────────────────────── */
 
 .landing-hero {
