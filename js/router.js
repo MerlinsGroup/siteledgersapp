@@ -15,6 +15,8 @@ const routes = {
   '/login':         { page: 'pages/public/login.html',            script: 'js/pages/login.js',             auth: false,  title: 'Sign In — SiteLedgers' },
   '/signup':        { page: 'pages/public/signup.html',           script: 'js/pages/signup.js',            auth: false,  title: 'Create Account — SiteLedgers' },
   '/verify-email':  { page: 'pages/public/verify-email.html',     script: 'js/pages/verify-email.js',      auth: false,  title: 'Verify Email — SiteLedgers' },
+  '/join':          { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
+  '/join/:code':    { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
   '/contact':       { page: 'pages/public/contact.html',          script: null,                            auth: false,  title: 'Contact Us — SiteLedgers' },
 
   // Authenticated app pages
@@ -113,7 +115,7 @@ async function handleRouteChange() {
   }
 
   // If already authenticated and trying to visit public auth pages, redirect to dashboard
-  if (['/login', '/signup', '/verify-email'].includes(path) && isAuthenticated()) {
+  if (['/login', '/signup', '/verify-email'].includes(path) && !path.startsWith('/join') && isAuthenticated()) {
     navigateTo('/dashboard');
     return;
   }

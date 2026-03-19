@@ -14,11 +14,18 @@ service cloud.firestore {
       return getUserData(orgId).role == 'owner';
     }
 
+    // Invites — readable by anyone (for join page), writable by signed-in users
+    match /invites/{inviteCode} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if false;
+    }
+
     // User-org lookup (login flow + bootstrapping)
     match /userOrgs/{uid} {
       allow read: if isSignedIn() && request.auth.uid == uid;
-      // Allow users to create their own lookup doc (seed/bootstrap)
-      // Allow owners to create lookup docs for invited users
+      // Allow users to create their own lookup doc (signup/join)
       allow create: if isSignedIn() && (request.auth.uid == uid || true);
       allow update, delete: if false;
     }

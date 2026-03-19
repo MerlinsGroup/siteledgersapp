@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiteLedgers — Seed BordoDesign Demo Data</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 60px auto; padding: 20px; }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    h2 { font-size: 1rem; color: #6B7280; margin-bottom: 20px; font-weight: 400; }
+    .step { padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+    .step--done { color: #16A34A; }
+    .step--active { color: #3B82F6; font-weight: 600; }
+    .step--error { color: #EF4444; }
+    button { padding: 12px 28px; background: #121826; color: #B7F34D; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .warning { background: #fef9c3; color: #854d0e; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }
+    .result { margin-top: 20px; padding: 16px; border-radius: 8px; font-size: 14px; }
+    .result--success { background: #d1fae5; color: #065f46; }
+    .result--error { background: #fef2f2; color: #991b1b; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    #steps { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>SiteLedgers — Seed BordoDesign Demo</h1>
+  <h2>Populate Firestore with realistic demo data</h2>
+
+  <p class="warning">
+    This creates a <strong>BordoDesign</strong> organisation with properties, issues, inspections,
+    team members, and activity logs. It uses your existing Firebase Auth account.
+  </p>
+
+  <div>
+    <label style="display:block; font-size:14px; font-weight:500; margin-bottom:4px;">Email</label>
+    <input type="email" id="email" style="width:100%; padding:8px 12px; font-size:16px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box; margin-bottom:12px;" placeholder="you@company.com">
+    <label style="display:block; font-size:14px; font-weight:500; margin-bottom:4px;">Password</label>
+    <input type="password" id="password" style="width:100%; padding:8px 12px; font-size:16px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+  </div>
+
+  <button id="seed-btn" onclick="runSeed()">Seed BordoDesign Data</button>
+
+  <div id="steps"></div>
+  <div id="result"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, collection, serverTimestamp, Timestamp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
+    import firebaseConfig from './js/firebase-config.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const stepsEl = document.getElementById('steps');
+    const resultEl = document.getElementById('result');
+
+    function addStep(text, status = 'active') {
+      const div = document.createElement('div');
+      div.className = `step step--${status}`;
+      div.textContent = (status === 'done' ? '✓ ' : status === 'error' ? '✗ ' : '→ ') + text;
+      div.id = 'step-' + stepsEl.children.length;
+      stepsEl.appendChild(div);
+      return div;
+    }
+
+    function markStep(div, status) {
+      div.className = `step step--${status}`;
+      const text = div.textContent.substring(2);
+      div.textContent = (status === 'done' ? '✓ ' : status === 'error' ? '✗ ' : '→ ') + text;
+    }
+
+    // Helper to create a Firestore timestamp for a past date
+    function daysAgo(days) {
+      const d = new Date();
+      d.setDate(d.getDate() - days);
+      return Timestamp.fromDate(d);
+    }
+
+    window.runSeed = async function() {
+      const btn = document.getElementById('seed-btn');
+      btn.disabled = true;
+      stepsEl.innerHTML = '';
+      resultEl.innerHTML = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        resultEl.innerHTML = '<div class="result result--error">Please enter email and password.</div>';
+        btn.disabled = false;
+        return;
+      }
+
+      try {
+        // ─── 1. SIGN IN ──────────────────────────────────────
+        let step = addStep('Signing in...');
+        let uid;
+        try {
+          const cred = await signInWithEmailAndPassword(auth, email, password);
+          uid = cred.user.uid;
+        } catch (e) {
+          if (e.code === 'auth/user-not-found') {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            uid = cred.user.uid;
+          } else { throw e; }
+        }
+        markStep(step, 'done');
+
+        const orgId = uid + '_org';
+
+        // ─── 2. ORGANISATION ─────────────────────────────────
+        step = addStep('Creating BordoDesign organisation...');
+        await setDoc(doc(db, 'organisations', orgId), {
+          name: 'BordoDesign',
+          ownerId: uid,
+          createdAt: daysAgo(90),
+        });
+        markStep(step, 'done');
+
+        // ─── 3. OWNER USER DOC ───────────────────────────────
+        step = addStep('Creating owner account...');
+        await setDoc(doc(db, 'organisations', orgId, 'users', uid), {
+          id: uid,
+          email: email,
+          name: 'Sam Mitchell',
+          phone: '+44 7700 900123',
+          role: 'owner',
+          company: 'BordoDesign',
+          avatarUrl: null,
+          assignedProperties: [],
+          hasAppAccess: true,
+          status: 'active',
+          notificationPrefs: { emailOnAssignment: true, emailOnOverdue: true, emailOnStatusChange: true },
+          createdAt: daysAgo(90),
+          createdBy: uid,
+          lastLoginAt: serverTimestamp(),
+        });
+
+        await setDoc(doc(db, 'userOrgs', uid), { orgId, role: 'owner' });
+        markStep(step, 'done');
+
+        // ─── 4. TEAM MEMBERS (invited placeholders) ──────────
+        step = addStep('Creating team members...');
+        const teamMembers = [
+          { name: 'James Clarke', email: 'james@bordodesign.co', role: 'property_manager', company: 'BordoDesign' },
+          { name: 'Sarah Nguyen', email: 'sarah@bordodesign.co', role: 'property_manager', company: 'BordoDesign' },
+          { name: 'Tom Hartley', email: 'tom@quickfixmaintenance.co.uk', role: 'contractor', company: 'QuickFix Maintenance' },
+          { name: 'Alex Petrov', email: 'alex@safedoor.co.uk', role: 'contractor', company: 'SafeDoor Ltd' },
+          { name: 'Rachel Kim', email: 'rachel@bordodesign.co', role: 'inspector', company: 'BordoDesign' },
+        ];
+
+        const memberIds = {};
+        for (const m of teamMembers) {
+          const ref = doc(collection(db, 'organisations', orgId, 'users'));
+          memberIds[m.name] = ref.id;
+          await setDoc(ref, {
+            id: ref.id,
+            email: m.email,
+            name: m.name,
+            phone: '',
+            role: m.role,
+            company: m.company,
+            avatarUrl: null,
+            assignedProperties: [],
+            hasAppAccess: true,
+            status: 'invited',
+            notificationPrefs: { emailOnAssignment: true, emailOnOverdue: true, emailOnStatusChange: true },
+            createdAt: daysAgo(60),
+            createdBy: uid,
+          });
+        }
+        markStep(step, 'done');
+
+        // ─── 5. PROPERTIES ───────────────────────────────────
+        step = addStep('Creating properties...');
+        const properties = [
+          { name: 'Riverside Court', address: '14 Thames Walk, London SE1 2AB', type: 'residential', units: 24, description: 'Modern riverside apartments. 3 blocks (A, B, C) with shared courtyard and underground parking.' },
+          { name: 'Oakfield House', address: '8 Park Lane, Oxford OX1 3HG', type: 'residential', units: 12, description: 'Victorian conversion into 12 self-contained flats. Grade II listed building.' },
+          { name: 'St James Medical Centre', address: '45 High Street, Bristol BS1 4QR', type: 'commercial', units: 8, description: 'Multi-tenant medical centre. Ground floor pharmacy, upper floors consulting rooms.' },
+          { name: 'Millbrook Academy', address: '22 School Road, Leeds LS1 5NP', type: 'commercial', units: 16, description: 'Purpose-built academy campus. Main block, sports hall, and science annex.' },
+          { name: 'The Granary', address: '3 Wharf Street, Manchester M1 6FT', type: 'mixed', units: 18, description: 'Converted warehouse. Ground floor retail, upper floors residential loft apartments.' },
+        ];
+
+        const propertyIds = {};
+        for (const p of properties) {
+          const ref = doc(collection(db, 'organisations', orgId, 'properties'));
+          propertyIds[p.name] = ref.id;
+          await setDoc(ref, {
+            name: p.name,
+            address: p.address,
+            type: p.type,
+            totalUnits: p.units,
+            description: p.description,
+            imageUrl: null,
+            createdAt: daysAgo(80),
+            createdBy: uid,
+          });
+
+          // Create some units for each property
+          for (let u = 1; u <= Math.min(p.units, 6); u++) {
+            await setDoc(doc(collection(db, 'organisations', orgId, 'properties', ref.id, 'units')), {
+              name: p.type === 'residential' ? `Unit ${u}${String.fromCharCode(64 + Math.ceil(u/3))}` : `Suite ${u}`,
+              floor: Math.ceil(u / 3),
+              status: u <= 4 ? 'occupied' : u === 5 ? 'vacant' : 'maintenance',
+              tenant: u <= 4 ? `Tenant ${u}` : null,
+              createdAt: daysAgo(75),
+            });
+          }
+        }
+        markStep(step, 'done');
+
+        // ─── 6. ISSUES ───────────────────────────────────────
+        step = addStep('Creating issues...');
+        const issues = [
+          { title: 'Broken window, Unit 4B', property: 'Riverside Court', status: 'reported', priority: 'high', category: 'structural', reportedBy: 'James Clarke', assignee: null, description: 'Large crack in double-glazed window, ground floor facing car park. Draught coming through. Tenant reports it happened during recent storm.', daysAgo: 2, photos: 2 },
+          { title: 'Water stain on ceiling, Unit 12A', property: 'Riverside Court', status: 'assigned', priority: 'medium', category: 'plumbing', reportedBy: 'Sarah Nguyen', assignee: 'Tom Hartley', description: 'Brown water stain approximately 30cm diameter on bedroom ceiling. Possible leak from flat above. No active dripping observed.', daysAgo: 4, photos: 3 },
+          { title: 'Fire door not closing, Block C', property: 'Riverside Court', status: 'in_progress', priority: 'high', category: 'fire_safety', reportedBy: 'James Clarke', assignee: 'Alex Petrov', description: 'Fire door on 3rd floor corridor not closing fully. Closer mechanism appears faulty. Identified during routine walkthrough.', daysAgo: 7, photos: 1 },
+          { title: 'Graffiti on exterior wall', property: 'Riverside Court', status: 'completed', priority: 'low', category: 'exterior', reportedBy: 'Rachel Kim', assignee: 'Tom Hartley', description: 'Spray paint graffiti on north-facing wall near bin store. Approximately 2m x 1m. Offensive content.', daysAgo: 14, photos: 4 },
+          { title: 'Lift out of service', property: 'Riverside Court', status: 'verified', priority: 'high', category: 'mechanical', reportedBy: 'Sarah Nguyen', assignee: 'Tom Hartley', description: 'Main passenger lift stuck on floor 2. Out of service sign posted. Engineer attended and replaced motor.', daysAgo: 21, photos: 2 },
+          { title: 'Damp patches in hallway', property: 'Oakfield House', status: 'reported', priority: 'medium', category: 'plumbing', reportedBy: 'James Clarke', assignee: null, description: 'Visible damp patches on ground floor hallway wall, near front entrance. Musty smell. Likely rising damp.', daysAgo: 1, photos: 2 },
+          { title: 'Broken fence panel, rear garden', property: 'Oakfield House', status: 'assigned', priority: 'low', category: 'exterior', reportedBy: 'Rachel Kim', assignee: 'Tom Hartley', description: 'Timber fence panel blown down in rear garden area. Gap approximately 1.8m. Security concern.', daysAgo: 5, photos: 2 },
+          { title: 'Emergency light fault, Floor 2', property: 'St James Medical Centre', status: 'in_progress', priority: 'high', category: 'electrical', reportedBy: 'James Clarke', assignee: 'Alex Petrov', description: 'Emergency exit light on floor 2 not illuminating during monthly test. Replacement unit ordered.', daysAgo: 3, photos: 1 },
+          { title: 'Cracked paving, main entrance', property: 'Millbrook Academy', status: 'reported', priority: 'medium', category: 'exterior', reportedBy: 'Sarah Nguyen', assignee: null, description: 'Several cracked paving slabs at main entrance. Trip hazard, especially during wet weather.', daysAgo: 2, photos: 3 },
+          { title: 'Heating failure, Suite 3', property: 'The Granary', status: 'assigned', priority: 'high', category: 'mechanical', reportedBy: 'Rachel Kim', assignee: 'Tom Hartley', description: 'Central heating not functioning in Suite 3, second floor. Radiators cold. Boiler pressure reading zero.', daysAgo: 1, photos: 1 },
+          { title: 'Intercom system fault', property: 'The Granary', status: 'completed', priority: 'medium', category: 'electrical', reportedBy: 'James Clarke', assignee: 'Alex Petrov', description: 'Door entry intercom for units 10-18 not connecting. Replaced main board. Now functioning.', daysAgo: 10, photos: 2 },
+          { title: 'Roof tile damage, Block A', property: 'Riverside Court', status: 'assigned', priority: 'high', category: 'structural', reportedBy: 'Sarah Nguyen', assignee: 'Tom Hartley', description: 'Several roof tiles displaced after storm. Visible from ground level. Risk of water ingress.', daysAgo: 3, photos: 3 },
+        ];
+
+        const issueIds = {};
+        for (const issue of issues) {
+          const ref = doc(collection(db, 'organisations', orgId, 'issues'));
+          issueIds[issue.title] = ref.id;
+
+          const reportedByName = issue.reportedBy;
+          const assigneeName = issue.assignee;
+
+          await setDoc(ref, {
+            title: issue.title,
+            propertyId: propertyIds[issue.property],
+            propertyName: issue.property,
+            status: issue.status,
+            priority: issue.priority,
+            category: issue.category,
+            description: issue.description,
+            reportedBy: memberIds[reportedByName] || uid,
+            reportedByName: reportedByName,
+            assignedTo: assigneeName ? (memberIds[assigneeName] || null) : null,
+            assignedToName: assigneeName || null,
+            photoCount: issue.photos,
+            location: '',
+            dueDate: null,
+            createdAt: daysAgo(issue.daysAgo),
+            updatedAt: daysAgo(Math.max(0, issue.daysAgo - 1)),
+            createdBy: memberIds[reportedByName] || uid,
+          });
+
+          // Add an issue update (the initial report)
+          await setDoc(doc(collection(db, 'organisations', orgId, 'issues', ref.id, 'updates')), {
+            type: 'status_change',
+            fromStatus: null,
+            toStatus: 'reported',
+            comment: 'Issue reported',
+            createdBy: memberIds[reportedByName] || uid,
+            createdByName: reportedByName,
+            createdAt: daysAgo(issue.daysAgo),
+          });
+
+          // Add assignment update if assigned
+          if (issue.status !== 'reported' && assigneeName) {
+            await setDoc(doc(collection(db, 'organisations', orgId, 'issues', ref.id, 'updates')), {
+              type: 'status_change',
+              fromStatus: 'reported',
+              toStatus: 'assigned',
+              comment: `Assigned to ${assigneeName}`,
+              createdBy: uid,
+              createdByName: 'Sam Mitchell',
+              createdAt: daysAgo(issue.daysAgo - 1),
+            });
+          }
+        }
+        markStep(step, 'done');
+
+        // ─── 7. INSPECTIONS ──────────────────────────────────
+        step = addStep('Creating inspections...');
+        const inspections = [
+          { title: 'Empty Unit Check — 4B', property: 'Riverside Court', type: 'security', status: 'scheduled', daysUntilDue: 0, checklistCount: 6, assignee: 'Rachel Kim' },
+          { title: 'Fire Safety — Block A', property: 'Riverside Court', type: 'fire_safety', status: 'scheduled', daysUntilDue: 1, checklistCount: 8, assignee: 'Rachel Kim' },
+          { title: 'Empty Unit Check — 7', property: 'Oakfield House', type: 'security', status: 'scheduled', daysUntilDue: 3, checklistCount: 6, assignee: 'James Clarke' },
+          { title: 'Empty Unit Check — 9C', property: 'Riverside Court', type: 'security', status: 'completed', daysUntilDue: -5, checklistCount: 6, assignee: 'Rachel Kim' },
+          { title: 'H&S Walkthrough', property: 'St James Medical Centre', type: 'health_safety', status: 'completed', daysUntilDue: -8, checklistCount: 12, assignee: 'James Clarke' },
+          { title: 'Quarterly External Review', property: 'Millbrook Academy', type: 'general', status: 'scheduled', daysUntilDue: 7, checklistCount: 10, assignee: 'Sarah Nguyen' },
+          { title: 'Fire Extinguisher Check', property: 'The Granary', type: 'fire_safety', status: 'completed', daysUntilDue: -12, checklistCount: 8, assignee: 'Rachel Kim' },
+        ];
+
+        for (const insp of inspections) {
+          const dueDate = new Date();
+          dueDate.setDate(dueDate.getDate() + insp.daysUntilDue);
+
+          const ref = doc(collection(db, 'organisations', orgId, 'inspections'));
+          await setDoc(ref, {
+            title: insp.title,
+            propertyId: propertyIds[insp.property],
+            propertyName: insp.property,
+            type: insp.type,
+            status: insp.status,
+            dueDate: Timestamp.fromDate(dueDate),
+            checklistItemCount: insp.checklistCount,
+            completedItemCount: insp.status === 'completed' ? insp.checklistCount : 0,
+            assignedTo: memberIds[insp.assignee] || uid,
+            assignedToName: insp.assignee,
+            notes: '',
+            createdAt: daysAgo(30),
+            completedAt: insp.status === 'completed' ? daysAgo(-insp.daysUntilDue) : null,
+            createdBy: uid,
+          });
+        }
+        markStep(step, 'done');
+
+        // ─── 8. CHECKLIST TEMPLATES ──────────────────────────
+        step = addStep('Creating checklist templates...');
+        const templates = [
+          {
+            name: 'Empty Unit Security Check',
+            type: 'security',
+            items: [
+              'All windows secured and intact',
+              'No signs of water ingress or damp',
+              'Heating system off / drained (if applicable)',
+              'No signs of unauthorised entry',
+              'Smoke alarms tested and working',
+              'Take photo evidence of unit condition',
+            ],
+          },
+          {
+            name: 'Fire Safety Inspection',
+            type: 'fire_safety',
+            items: [
+              'All fire doors closing correctly',
+              'Fire extinguishers in date and accessible',
+              'Emergency lighting functioning',
+              'Fire alarm panel showing no faults',
+              'Escape routes clear and unobstructed',
+              'Fire assembly point signage visible',
+              'Smoke detectors tested',
+              'Fire risk assessment displayed',
+            ],
+          },
+        ];
+
+        for (const tmpl of templates) {
+          const ref = doc(collection(db, 'organisations', orgId, 'checklistTemplates'));
+          await setDoc(ref, {
+            name: tmpl.name,
+            type: tmpl.type,
+            itemCount: tmpl.items.length,
+            createdAt: daysAgo(60),
+            createdBy: uid,
+          });
+
+          for (let i = 0; i < tmpl.items.length; i++) {
+            await setDoc(doc(collection(db, 'organisations', orgId, 'checklistTemplates', ref.id, 'items')), {
+              text: tmpl.items[i],
+              order: i + 1,
+            });
+          }
+        }
+        markStep(step, 'done');
+
+        // ─── 9. ACTIVITY LOG ─────────────────────────────────
+        step = addStep('Creating activity log...');
+        const activities = [
+          { action: 'issue_created', detail: 'Broken window, Unit 4B reported', user: 'James Clarke', daysAgo: 2 },
+          { action: 'issue_created', detail: 'Damp patches in hallway reported', user: 'James Clarke', daysAgo: 1 },
+          { action: 'issue_created', detail: 'Heating failure, Suite 3 reported', user: 'Rachel Kim', daysAgo: 1 },
+          { action: 'issue_assigned', detail: 'Water stain on ceiling assigned to Tom Hartley', user: 'Sam Mitchell', daysAgo: 3 },
+          { action: 'issue_assigned', detail: 'Fire door not closing assigned to Alex Petrov', user: 'Sam Mitchell', daysAgo: 6 },
+          { action: 'status_change', detail: 'Graffiti on exterior wall marked as completed', user: 'Tom Hartley', daysAgo: 7 },
+          { action: 'status_change', detail: 'Lift out of service verified and closed', user: 'Sam Mitchell', daysAgo: 14 },
+          { action: 'inspection_completed', detail: 'Empty Unit Check — 9C completed', user: 'Rachel Kim', daysAgo: 5 },
+          { action: 'inspection_completed', detail: 'H&S Walkthrough completed', user: 'James Clarke', daysAgo: 8 },
+          { action: 'user_invited', detail: 'Tom Hartley invited as contractor', user: 'Sam Mitchell', daysAgo: 60 },
+          { action: 'property_created', detail: 'Riverside Court added', user: 'Sam Mitchell', daysAgo: 80 },
+          { action: 'property_created', detail: 'Oakfield House added', user: 'Sam Mitchell', daysAgo: 78 },
+          { action: 'issue_created', detail: 'Roof tile damage reported', user: 'Sarah Nguyen', daysAgo: 3 },
+          { action: 'issue_assigned', detail: 'Heating failure assigned to Tom Hartley', user: 'Sam Mitchell', daysAgo: 0 },
+          { action: 'inspection_scheduled', detail: 'Fire Safety — Block A scheduled for tomorrow', user: 'Sam Mitchell', daysAgo: 2 },
+        ];
+
+        for (const a of activities) {
+          await setDoc(doc(collection(db, 'organisations', orgId, 'activityLog')), {
+            action: a.action,
+            detail: a.detail,
+            userId: a.user === 'Sam Mitchell' ? uid : (memberIds[a.user] || uid),
+            userName: a.user,
+            createdAt: daysAgo(a.daysAgo),
+          });
+        }
+        markStep(step, 'done');
+
+        // ─── DONE ────────────────────────────────────────────
+        resultEl.innerHTML = `
+          <div class="result result--success">
+            <strong>BordoDesign demo data seeded successfully!</strong><br><br>
+            Organisation: <strong>BordoDesign</strong><br>
+            Org ID: <code>${orgId}</code><br>
+            Owner: <strong>Sam Mitchell</strong> (${email})<br>
+            Team members: <strong>${teamMembers.length}</strong> (invited)<br>
+            Properties: <strong>${properties.length}</strong><br>
+            Issues: <strong>${issues.length}</strong><br>
+            Inspections: <strong>${inspections.length}</strong><br><br>
+            <a href="index.html#/login" style="color:#065f46; font-weight:600;">→ Sign in to SiteLedgers</a>
+          </div>
+        `;
+
+      } catch (err) {
+        console.error(err);
+        resultEl.innerHTML = `<div class="result result--error">Error: ${err.message}</div>`;
+      }
+
+      btn.disabled = false;
+    };
+  </script>
+</body>
+</html>

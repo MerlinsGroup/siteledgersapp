@@ -18,7 +18,9 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
+  collection,
 } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
 
 import { auth, db } from './firebase-init.js';
@@ -261,6 +263,167 @@ async function resendVerification() {
   }
 }
 
+// ─── Invite System ───────────────────────────────────────
+
+/**
+ * Generate a random invite code.
+ */
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let code = '';
+  for (let i = 0; i < 12; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+/**
+ * Create an invite for a new team member.
+ * Called by an org owner/manager from the Users page.
+ * Returns { success: true, inviteCode, inviteUrl } or { success: false, error }.
+ */
+async function createInvite(email, name, role, orgId, orgName, createdByUid) {
+  try {
+    const inviteCode = generateInviteCode();
+
+    await setDoc(doc(db, 'invites', inviteCode), {
+      orgId,
+      orgName,
+      email,
+      name,
+      role,
+      createdBy: createdByUid,
+      createdAt: serverTimestamp(),
+      status: 'pending',
+    });
+
+    // Also create a placeholder user doc with status 'invited'
+    await setDoc(doc(collection(db, 'organisations', orgId, 'users')), {
+      email,
+      name,
+      role,
+      status: 'invited',
+      inviteCode,
+      phone: '',
+      company: '',
+      avatarUrl: null,
+      assignedProperties: [],
+      hasAppAccess: true,
+      notificationPrefs: {
+        emailOnAssignment: true,
+        emailOnOverdue: true,
+        emailOnStatusChange: true,
+      },
+      createdAt: serverTimestamp(),
+      createdBy: createdByUid,
+    });
+
+    const inviteUrl = `${window.location.origin}${window.location.pathname}#/join/${inviteCode}`;
+
+    return { success: true, inviteCode, inviteUrl };
+  } catch (err) {
+    console.error('Create invite error:', err);
+    return { success: false, error: 'Failed to create invite. Please try again.' };
+  }
+}
+
+/**
+ * Look up an invite by code.
+ * Returns the invite data or null if not found/expired.
+ */
+async function getInvite(inviteCode) {
+  try {
+    const snap = await getDoc(doc(db, 'invites', inviteCode));
+    if (!snap.exists()) return null;
+    const data = snap.data();
+    if (data.status !== 'pending') return null;
+    return data;
+  } catch (err) {
+    console.error('Get invite error:', err);
+    return null;
+  }
+}
+
+/**
+ * Join an organisation via invite code.
+ * Creates Firebase Auth account, user doc, userOrgs doc, marks invite as used.
+ * Returns { success: true } or { success: false, error }.
+ */
+async function joinOrganisation(inviteCode, password) {
+  try {
+    // 1. Load the invite
+    const invite = await getInvite(inviteCode);
+    if (!invite) {
+      return { success: false, error: 'Invalid or expired invite link.' };
+    }
+
+    const { orgId, email, name, role } = invite;
+
+    // 2. Create Firebase Auth account (or sign in if exists)
+    let uid;
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      uid = credential.user.uid;
+    } catch (authErr) {
+      if (authErr.code === 'auth/email-already-in-use') {
+        try {
+          const credential = await signInWithEmailAndPassword(auth, email, password);
+          uid = credential.user.uid;
+        } catch (signInErr) {
+          return { success: false, error: friendlyAuthError(signInErr.code) };
+        }
+      } else {
+        return { success: false, error: friendlyAuthError(authErr.code) };
+      }
+    }
+
+    // 3. Send verification email
+    if (auth.currentUser && !auth.currentUser.emailVerified) {
+      await sendEmailVerification(auth.currentUser);
+    }
+
+    // 4. Create the real user doc (with proper uid as doc ID)
+    await setDoc(doc(db, 'organisations', orgId, 'users', uid), {
+      id: uid,
+      email,
+      name,
+      phone: '',
+      role,
+      company: '',
+      avatarUrl: null,
+      assignedProperties: [],
+      hasAppAccess: true,
+      status: 'active',
+      notificationPrefs: {
+        emailOnAssignment: true,
+        emailOnOverdue: true,
+        emailOnStatusChange: true,
+      },
+      createdAt: serverTimestamp(),
+      createdBy: invite.createdBy || uid,
+      lastLoginAt: serverTimestamp(),
+    });
+
+    // 5. Create userOrgs lookup
+    await setDoc(doc(db, 'userOrgs', uid), {
+      orgId,
+      role,
+    });
+
+    // 6. Mark invite as used
+    await updateDoc(doc(db, 'invites', inviteCode), {
+      status: 'accepted',
+      acceptedBy: uid,
+      acceptedAt: serverTimestamp(),
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('Join organisation error:', err);
+    return { success: false, error: err.message || 'An error occurred. Please try again.' };
+  }
+}
+
 // ─── Helpers ────────────────────────────────────────────
 
 /**
@@ -281,4 +444,4 @@ function friendlyAuthError(code) {
   return messages[code] || 'An error occurred. Please try again.';
 }
 
-export { login, logout, resetPassword, signup, resendVerification, initAuth };
+export { login, logout, resetPassword, signup, resendVerification, createInvite, getInvite, joinOrganisation, initAuth };

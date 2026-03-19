@@ -1,0 +1,46 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card__logo">Site<span>Ledgers</span></div>
+
+    <!-- Loading state while we look up the invite -->
+    <div id="join-loading" style="text-align: center; padding: var(--space-6) 0;">
+      <div class="spinner" style="margin: 0 auto var(--space-3);"></div>
+      <p class="text-sm text-muted">Loading invite...</p>
+    </div>
+
+    <!-- Invalid invite state -->
+    <div id="join-invalid" style="display: none; text-align: center;">
+      <p class="login-card__subtitle">Invalid or expired invite</p>
+      <p style="font-size: var(--font-size-sm); color: var(--color-gray-500); margin-bottom: var(--space-6);">
+        This invite link is no longer valid. Ask your organisation admin for a new one.
+      </p>
+      <a href="#/login" class="btn btn--primary btn--full">Go to Sign In</a>
+    </div>
+
+    <!-- Join form -->
+    <div id="join-form-container" style="display: none;">
+      <p class="login-card__subtitle">You've been invited to join</p>
+      <div id="join-org-name" style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-charcoal); text-align: center; margin-bottom: var(--space-6);"></div>
+
+      <div id="join-error" class="login-card__error"></div>
+
+      <form id="join-form" novalidate>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="join-name" class="form-input" readonly>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="join-email" class="form-input" readonly>
+        </div>
+        <div class="form-group">
+          <label for="join-password">Choose a Password (min 6 characters)</label>
+          <input type="password" id="join-password" class="form-input" placeholder="Choose a password" autocomplete="new-password" required minlength="6">
+        </div>
+        <button type="submit" id="join-btn" class="btn btn--primary btn--full btn--lg">Join Organisation</button>
+      </form>
+
+      <p class="login-card__footer">Already have an account? <a href="#/login">Sign in</a></p>
+    </div>
+  </div>
+</div>

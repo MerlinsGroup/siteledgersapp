@@ -1,30 +1,31 @@
 <div class="login-page">
   <div class="login-card">
     <div class="login-card__logo">Site<span>Ledgers</span></div>
-    <p class="login-card__subtitle">Create your account & organisation</p>
+    <p class="login-card__subtitle">Set up your organisation</p>
 
     <div id="signup-error" class="login-card__error"></div>
 
     <form id="signup-form" novalidate>
       <div class="form-group">
         <label for="signup-org">Organisation Name</label>
-        <input type="text" id="signup-org" class="form-input" placeholder="My Company" required>
+        <input type="text" id="signup-org" class="form-input" placeholder="e.g. Bordo Design" required>
       </div>
       <div class="form-group">
         <label for="signup-name">Your Full Name</label>
         <input type="text" id="signup-name" class="form-input" placeholder="Jane Smith" required>
       </div>
       <div class="form-group">
-        <label for="signup-email">Email</label>
+        <label for="signup-email">Work Email</label>
         <input type="email" id="signup-email" class="form-input" placeholder="you@company.com" autocomplete="email" required>
       </div>
       <div class="form-group">
         <label for="signup-password">Password (min 6 characters)</label>
         <input type="password" id="signup-password" class="form-input" placeholder="Choose a password" autocomplete="new-password" required minlength="6">
       </div>
-      <button type="submit" id="signup-btn" class="btn btn--primary btn--full btn--lg">Create Account</button>
+      <button type="submit" id="signup-btn" class="btn btn--primary btn--full btn--lg">Create Organisation</button>
     </form>
 
     <p class="login-card__footer">Already have an account? <a href="#/login">Sign in</a></p>
+    <p class="login-card__footer" style="margin-top: var(--space-2);">Got an invite link? <a href="#/join">Join an organisation</a></p>
   </div>
 </div>
