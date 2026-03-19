@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData(orgId) {
+      return get(/databases/$(database)/documents/organisations/$(orgId)/users/$(request.auth.uid)).data;
+    }
+
+    function isOwner(orgId) {
+      return getUserData(orgId).role == 'owner';
+    }
+
+    // User-org lookup (login flow)
+    match /userOrgs/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Organisation
+    match /organisations/{orgId} {
+      allow read: if isSignedIn();
+
+      // Users
+      match /users/{userId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isOwner(orgId);
+        allow update: if isSignedIn() && (isOwner(orgId) || request.auth.uid == userId);
+        allow delete: if false;
+      }
+
+      // Properties
+      match /properties/{propertyId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isOwner(orgId);
+        allow update: if isSignedIn();
+        allow delete: if false;
+
+        match /units/{unitId} {
+          allow read: if isSignedIn();
+          allow write: if isSignedIn();
+          allow delete: if false;
+        }
+      }
+
+      // Issues
+      match /issues/{issueId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update: if isSignedIn();
+        allow delete: if isSignedIn() && isOwner(orgId);
+
+        // Issue updates — append-only, immutable
+        match /updates/{updateId} {
+          allow read: if isSignedIn();
+          allow create: if isSignedIn();
+          allow update, delete: if false;
+        }
+      }
+
+      // Attachments — permanent evidence
+      match /attachments/{attachmentId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update, delete: if false;
+      }
+
+      // Inspections
+      match /inspections/{inspectionId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update: if isSignedIn();
+        allow delete: if false;
+
+        match /responses/{responseId} {
+          allow read: if isSignedIn();
+          allow create, update: if isSignedIn();
+          allow delete: if false;
+        }
+      }
+
+      // Checklist templates
+      match /checklistTemplates/{templateId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn();
+
+        match /items/{itemId} {
+          allow read: if isSignedIn();
+          allow write: if isSignedIn();
+        }
+      }
+
+      // Activity log — append-only, immutable
+      match /activityLog/{logId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update, delete: if false;
+      }
+    }
+  }
+}
