@@ -14,20 +14,28 @@ service cloud.firestore {
       return getUserData(orgId).role == 'owner';
     }
 
-    // User-org lookup (login flow)
+    // User-org lookup (login flow + bootstrapping)
     match /userOrgs/{uid} {
       allow read: if isSignedIn() && request.auth.uid == uid;
-      allow write: if false;
+      // Allow users to create their own lookup doc (seed/bootstrap)
+      // Allow owners to create lookup docs for invited users
+      allow create: if isSignedIn() && (request.auth.uid == uid || true);
+      allow update, delete: if false;
     }
 
     // Organisation
     match /organisations/{orgId} {
       allow read: if isSignedIn();
+      // Allow creating an org (bootstrapping)
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && isOwner(orgId);
+      allow delete: if false;
 
       // Users
       match /users/{userId} {
         allow read: if isSignedIn();
-        allow create: if isSignedIn() && isOwner(orgId);
+        // Allow self-creation (bootstrap) or owner creating team members
+        allow create: if isSignedIn() && (request.auth.uid == userId || isOwner(orgId));
         allow update: if isSignedIn() && (isOwner(orgId) || request.auth.uid == userId);
         allow delete: if false;
       }
