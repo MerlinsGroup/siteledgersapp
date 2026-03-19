@@ -38,18 +38,20 @@ async function login(email, password) {
     const credential = await signInWithEmailAndPassword(auth, email, password);
     const uid = credential.user.uid;
 
-    // Check email verification
-    if (!credential.user.emailVerified) {
-      return { success: false, error: 'EMAIL_NOT_VERIFIED' };
-    }
-
     // Load org mapping and user profile into state
     const loaded = await loadUserSession(uid);
     if (!loaded) {
-      // User authenticated but has no org/user doc — sign them out
+      // No Firestore docs — if also unverified, send to verify page
+      if (!credential.user.emailVerified) {
+        return { success: false, error: 'EMAIL_NOT_VERIFIED' };
+      }
+      // Verified but no docs — shouldn't happen, sign out
       await signOut(auth);
       return { success: false, error: 'Account not found. Contact your administrator.' };
     }
+
+    // If Firestore docs exist but email isn't verified, still allow login
+    // (covers accounts created before verification was added)
 
     return { success: true };
   } catch (err) {
@@ -98,12 +100,13 @@ async function resetPassword(email) {
 function initAuth() {
   return new Promise((resolve) => {
     onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser && firebaseUser.emailVerified) {
+      if (firebaseUser) {
+        // Try to load session — works for verified users and
+        // existing accounts created before email verification was added
         await loadUserSession(firebaseUser.uid);
-      } else if (!firebaseUser) {
+      } else {
         clearState();
       }
-      // If firebaseUser exists but not verified, leave state cleared
       setState({ initialized: true });
       resolve();
     });
