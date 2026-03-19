@@ -50,7 +50,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js';
-    import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js';
     import { getFirestore, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
     import firebaseConfig from './js/firebase-config.js';
 
@@ -83,9 +83,20 @@
       try {
         showStatus('Creating auth account...', 'info');
 
-        // 1. Create Firebase Auth user
-        const credential = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = credential.user.uid;
+        // 1. Create Firebase Auth user (or sign in if already exists)
+        let uid;
+        try {
+          const credential = await createUserWithEmailAndPassword(auth, email, password);
+          uid = credential.user.uid;
+        } catch (authErr) {
+          if (authErr.code === 'auth/email-already-in-use') {
+            showStatus('Auth account exists, signing in to write Firestore docs...', 'info');
+            const credential = await signInWithEmailAndPassword(auth, email, password);
+            uid = credential.user.uid;
+          } else {
+            throw authErr;
+          }
+        }
 
         showStatus('Creating organisation...', 'info');
 
