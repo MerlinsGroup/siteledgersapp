@@ -196,12 +196,7 @@ async function signup(email, password, name, orgName) {
       }
     }
 
-    // 2. Send verification email
-    if (auth.currentUser) {
-      await sendEmailVerification(auth.currentUser);
-    }
-
-    // 3. Create Firestore documents (org, user, userOrgs)
+    // 2. Create Firestore documents (org, user, userOrgs)
     const orgId = uid + '_org';
 
     await setDoc(doc(db, 'organisations', orgId), {
@@ -235,9 +230,6 @@ async function signup(email, password, name, orgName) {
       orgId: orgId,
       role: 'owner',
     });
-
-    // Don't sign out — keep auth.currentUser available for resendVerification
-    // initAuth guard prevents unverified users from accessing protected pages
 
     return { success: true };
   } catch (err) {

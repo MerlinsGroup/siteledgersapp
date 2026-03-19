@@ -38,7 +38,7 @@ export function init() {
     const result = await signup(email, password, name, orgName);
 
     if (result.success) {
-      navigateTo('/verify-email');
+      navigateTo('/dashboard');
     } else {
       errorEl.textContent = result.error;
       errorEl.style.display = '';
