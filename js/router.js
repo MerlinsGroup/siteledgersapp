@@ -1,7 +1,13 @@
 /**
  * SiteLedgers — Client-Side Router
  * Hash-based routing for single-page app navigation.
+ * Integrates with auth state and role-based page access.
  */
+
+import { isAuthenticated, getState } from './state.js';
+import { canAccessPage } from './roles.js';
+
+// ─── Route Definitions ──────────────────────────────────
 
 const routes = {
   // Public pages
@@ -22,15 +28,20 @@ const routes = {
   '/profile':         { page: 'pages/app/profile.html',             script: 'js/pages/profile.js',         auth: true,   title: 'Profile — SiteLedgers' },
 };
 
+// Track the currently loaded page script module for cleanup
+let currentPageModule = null;
+
+// ─── Route Matching ─────────────────────────────────────
+
 /**
  * Match a URL path against the route table.
  * Supports dynamic segments like :id.
- * Returns { route, params } or null.
+ * Returns { route, params, pattern } or null.
  */
 function matchRoute(path) {
   // Try exact match first
   if (routes[path]) {
-    return { route: routes[path], params: {} };
+    return { route: routes[path], params: {}, pattern: path };
   }
 
   // Try pattern matching for dynamic routes
@@ -53,15 +64,17 @@ function matchRoute(path) {
     }
 
     if (match) {
-      return { route, params };
+      return { route, params, pattern };
     }
   }
 
   return null;
 }
 
+// ─── Navigation ─────────────────────────────────────────
+
 /**
- * Navigate to a route. Updates URL hash and loads the page.
+ * Navigate to a route. Updates URL hash and triggers page load.
  */
 function navigateTo(path) {
   window.location.hash = '#' + path;
@@ -75,6 +88,8 @@ function getCurrentPath() {
   return hash || '/';
 }
 
+// ─── Route Handler ──────────────────────────────────────
+
 /**
  * Handle route changes. Called on hash change and initial load.
  */
@@ -83,19 +98,49 @@ async function handleRouteChange() {
   const result = matchRoute(path);
 
   if (!result) {
-    // 404 — redirect to landing or show not found
     navigateTo('/');
     return;
   }
 
-  const { route, params } = result;
+  const { route, params, pattern } = result;
 
-  // TODO: Auth check — redirect to /login if route.auth && !isLoggedIn
+  // ── Auth guard ──
+  if (route.auth && !isAuthenticated()) {
+    navigateTo('/login');
+    return;
+  }
 
-  // Update page title
+  // If already authenticated and trying to visit login, redirect to dashboard
+  if (path === '/login' && isAuthenticated()) {
+    navigateTo('/dashboard');
+    return;
+  }
+
+  // ── Role-based access guard ──
+  if (route.auth) {
+    const { role } = getState();
+    if (role && !canAccessPage(role, pattern)) {
+      navigateTo('/dashboard');
+      return;
+    }
+  }
+
+  // ── Update page title ──
   document.title = route.title;
 
-  // Load page HTML into the app container
+  // ── Cleanup previous page module ──
+  if (currentPageModule && typeof currentPageModule.destroy === 'function') {
+    currentPageModule.destroy();
+  }
+  currentPageModule = null;
+
+  // ── Toggle navbar visibility ──
+  const navbarContainer = document.getElementById('navbar-container');
+  if (navbarContainer) {
+    navbarContainer.style.display = route.auth ? '' : 'none';
+  }
+
+  // ── Load page HTML into the app container ──
   const container = document.getElementById('app');
   if (container && route.page) {
     try {
@@ -103,17 +148,18 @@ async function handleRouteChange() {
       if (response.ok) {
         container.innerHTML = await response.text();
       } else {
-        container.innerHTML = '<h1>Page not found</h1>';
+        container.innerHTML = '<div class="page-error"><h1>Page not found</h1><p><a href="#/dashboard">Go to Dashboard</a></p></div>';
       }
     } catch (err) {
-      container.innerHTML = '<h1>Error loading page</h1>';
+      container.innerHTML = '<div class="page-error"><h1>Error loading page</h1><p>Please check your connection and try again.</p></div>';
     }
   }
 
-  // Load page-specific script if defined
+  // ── Load page-specific script ──
   if (route.script) {
     try {
       const module = await import('../' + route.script);
+      currentPageModule = module;
       if (module.init) {
         module.init(params);
       }
@@ -123,10 +169,14 @@ async function handleRouteChange() {
   }
 }
 
-// Listen for hash changes
-window.addEventListener('hashchange', handleRouteChange);
+// ─── Router Init ────────────────────────────────────────
 
-// Initial route on page load
-window.addEventListener('DOMContentLoaded', handleRouteChange);
+/**
+ * Initialize the router. Called once from app.js after auth is ready.
+ */
+function initRouter() {
+  window.addEventListener('hashchange', handleRouteChange);
+  handleRouteChange(); // Handle the initial URL
+}
 
-export { routes, navigateTo, getCurrentPath, matchRoute };
+export { routes, navigateTo, getCurrentPath, matchRoute, initRouter };
