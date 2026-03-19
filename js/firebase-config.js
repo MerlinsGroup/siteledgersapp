@@ -1,16 +1,15 @@
 /**
  * SiteLedgers — Firebase Configuration
- * Replace the placeholder values with your Firebase project credentials.
- * Get these from: Firebase Console → Project Settings → General → Your apps → Web app
+ * Connected to Firebase project: siteledgers-app
  */
 
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.firebasestorage.app',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyDlGK5czbz7y-wWf2c9fB2sVb2f8aCIAQ0',
+  authDomain: 'siteledgers-app.firebaseapp.com',
+  projectId: 'siteledgers-app',
+  storageBucket: 'siteledgers-app.firebasestorage.app',
+  messagingSenderId: '55281799159',
+  appId: '1:55281799159:web:b76ee230a1c5e8d6f8e8f2',
 };
 
 export default firebaseConfig;

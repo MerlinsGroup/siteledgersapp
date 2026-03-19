@@ -1,1 +1,78 @@
-/* SiteLedgers: utilities styles */
+/* SiteLedgers — Utility Classes
+   Common helpers for spacing, text, display, and visibility. */
+
+/* ─── Text ─────────────────────────────────────────────── */
+
+.text-sm    { font-size: var(--font-size-sm); }
+.text-xs    { font-size: var(--font-size-xs); }
+.text-lg    { font-size: var(--font-size-lg); }
+.text-bold  { font-weight: var(--font-weight-bold); }
+.text-muted { color: var(--color-gray-500); }
+.text-danger { color: var(--color-danger); }
+.text-success { color: var(--color-success); }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Spacing ──────────────────────────────────────────── */
+
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+.mr-2 { margin-right: var(--space-2); }
+.mr-4 { margin-right: var(--space-4); }
+.ml-2 { margin-left: var(--space-2); }
+.ml-auto { margin-left: auto; }
+
+.p-4  { padding: var(--space-4); }
+.p-6  { padding: var(--space-6); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
+
+.gap-2 { gap: var(--space-2); }
+.gap-4 { gap: var(--space-4); }
+
+/* ─── Flexbox ──────────────────────────────────────────── */
+
+.flex       { display: flex; }
+.flex-col   { flex-direction: column; }
+.flex-wrap  { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.flex-1     { flex: 1; }
+
+/* ─── Display ──────────────────────────────────────────── */
+
+.hidden { display: none; }
+.block  { display: block; }
+.inline { display: inline; }
+
+/* ─── Visibility by Role ───────────────────────────────── */
+/* Controlled by JS via data-role and data-permission attributes.
+   See ui.js applyRoleVisibility() and applyPermissionVisibility(). */
+
+/* ─── Borders ──────────────────────────────────────────── */
+
+.border-b { border-bottom: 1px solid var(--border-color); }
+.border-t { border-top: 1px solid var(--border-color); }
+.rounded  { border-radius: var(--radius-md); }
+
+/* ─── Width ────────────────────────────────────────────── */
+
+.w-full { width: 100%; }

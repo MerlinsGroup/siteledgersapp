@@ -1,1 +1,165 @@
-/* SiteLedgers: pages styles */
+/* SiteLedgers — Page-Specific Styles
+   Styles for login, dashboard, and other specific pages. */
+
+/* ─── Login Page ───────────────────────────────────────── */
+
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-gray-50);
+  padding: var(--space-4);
+}
+
+.login-card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card__logo {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--space-2);
+}
+
+.login-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.login-card .form-group:last-of-type {
+  margin-bottom: var(--space-6);
+}
+
+.login-card__forgot {
+  display: block;
+  text-align: right;
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  margin-top: var(--space-2);
+}
+
+.login-card__error {
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: var(--font-size-sm);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  display: none;
+}
+
+/* ─── Landing Page ─────────────────────────────────────── */
+
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 80vh;
+  padding: var(--space-8);
+}
+
+.landing-hero__title {
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-4);
+  max-width: 600px;
+}
+
+.landing-hero__text {
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-8);
+  max-width: 500px;
+}
+
+/* ─── Dashboard ────────────────────────────────────────── */
+
+.dashboard-section {
+  margin-bottom: var(--space-8);
+}
+
+.dashboard-section__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-4);
+  color: var(--color-gray-800);
+}
+
+/* ─── Property Card ────────────────────────────────────── */
+
+.property-card {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.property-card__image {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--color-gray-100);
+  flex-shrink: 0;
+}
+
+.property-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.property-card__name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-1);
+}
+
+.property-card__address {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-2);
+}
+
+.property-card__stats {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+/* ─── Issue Row ────────────────────────────────────────── */
+
+.issue-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.issue-row:last-child {
+  border-bottom: none;
+}
+
+.issue-row__title {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-800);
+}
+
+.issue-row__meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+}
