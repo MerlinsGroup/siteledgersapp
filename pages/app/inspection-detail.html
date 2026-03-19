@@ -1,1 +1,35 @@
-<!-- SiteLedgers: inspection-detail -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <a href="#/inspections" class="btn btn--text btn--sm" style="margin-bottom:var(--space-2);display:inline-flex;">&larr; Inspections</a>
+      <h1 id="inspection-title">Loading...</h1>
+      <p class="text-sm text-muted" id="inspection-property"></p>
+    </div>
+    <span class="badge" id="inspection-status-badge"></span>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-card__label">Scheduled Date</div><div class="stat-card__value" id="insp-date" style="font-size:var(--font-size-lg);">—</div></div>
+    <div class="stat-card"><div class="stat-card__label">Inspector</div><div class="stat-card__value" id="insp-inspector" style="font-size:var(--font-size-lg);">—</div></div>
+    <div class="stat-card"><div class="stat-card__label">Progress</div><div class="stat-card__value" id="insp-progress">—</div></div>
+  </div>
+
+  <div id="insp-notes-section" class="card mb-6" style="display:none;">
+    <div class="card__header"><h3 class="card__title">Notes</h3></div>
+    <div class="card__body"><p class="text-sm" id="insp-notes" style="white-space:pre-wrap;"></p></div>
+  </div>
+
+  <div class="card mb-6">
+    <div class="card__header" style="display:flex;align-items:center;">
+      <h3 class="card__title">Checklist</h3>
+      <div style="flex:1;max-width:200px;margin-left:var(--space-4);">
+        <div style="background:var(--color-gray-100);border-radius:var(--radius-full);height:8px;overflow:hidden;">
+          <div id="progress-fill" style="background:var(--color-primary);height:100%;width:0%;transition:width 0.3s;border-radius:var(--radius-full);"></div>
+        </div>
+      </div>
+    </div>
+    <div id="inspection-checklist"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+  </div>
+
+  <div style="display:flex;gap:var(--space-3);justify-content:flex-end;" id="inspection-actions"></div>
+</div>

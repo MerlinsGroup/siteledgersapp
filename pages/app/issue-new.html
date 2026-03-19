@@ -1,1 +1,79 @@
-<!-- SiteLedgers: issue-new -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <a href="#/dashboard" class="btn btn--text btn--sm" style="margin-bottom:var(--space-2);display:inline-flex;">&larr; Dashboard</a>
+      <h1>Log New Issue</h1>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:640px;">
+    <form id="new-issue-form">
+      <div class="form-group">
+        <label class="form-label" for="issue-property">Property *</label>
+        <select class="form-input" id="issue-property" required>
+          <option value="">Select property...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="issue-title">Issue Title *</label>
+        <input class="form-input" type="text" id="issue-title" placeholder="Brief description of the issue" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="issue-description">Description</label>
+        <textarea class="form-input" id="issue-description" rows="4" placeholder="Detailed description, location, observations..."></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group">
+          <label class="form-label" for="issue-priority">Priority</label>
+          <select class="form-input" id="issue-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="issue-category">Category</label>
+          <select class="form-input" id="issue-category">
+            <option value="maintenance">Maintenance</option>
+            <option value="safety">Safety</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="structural">Structural</option>
+            <option value="cosmetic">Cosmetic</option>
+            <option value="pest_control">Pest Control</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group">
+          <label class="form-label" for="issue-due-date">Due Date</label>
+          <input class="form-input" type="date" id="issue-due-date">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="issue-assignee">Assign To</label>
+          <select class="form-input" id="issue-assignee">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="issue-location">Location / Unit</label>
+        <input class="form-input" type="text" id="issue-location" placeholder="e.g. Unit 4B, Roof, Car park level 2">
+      </div>
+
+      <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6);">
+        <a href="#/dashboard" class="btn btn--secondary">Cancel</a>
+        <button type="submit" class="btn btn--primary" id="submit-issue-btn">Log Issue</button>
+      </div>
+    </form>
+  </div>
+</div>

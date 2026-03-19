@@ -1,1 +1,58 @@
-<!-- SiteLedgers: users -->
+<div class="page">
+  <div class="page-header">
+    <h1>Team & Contacts</h1>
+    <button class="btn btn--primary" id="invite-user-btn" data-permission="user_invite">Invite Member</button>
+  </div>
+
+  <div style="margin-bottom:var(--space-4);">
+    <input class="form-input" type="text" id="user-search" placeholder="Search team members..." style="max-width:360px;">
+  </div>
+
+  <div class="card">
+    <div id="users-list"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    <div id="users-empty" class="empty-state" style="display:none;">
+      <p class="empty-state__text">No team members yet.</p>
+      <button class="btn btn--primary btn--sm" id="invite-user-empty-btn" data-permission="user_invite">Invite First Member</button>
+    </div>
+  </div>
+
+  <!-- Invite Modal -->
+  <div class="modal-overlay" id="invite-modal" style="display:none;">
+    <div class="modal">
+      <div class="modal__header">
+        <h3 class="modal__title">Invite Team Member</h3>
+        <button class="modal__close" id="close-invite-modal">&times;</button>
+      </div>
+      <form id="invite-form">
+        <div class="modal__body">
+          <div class="form-group">
+            <label class="form-label" for="invite-name">Full Name *</label>
+            <input class="form-input" type="text" id="invite-name" placeholder="John Smith" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="invite-email">Email *</label>
+            <input class="form-input" type="email" id="invite-email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="invite-role">Role *</label>
+            <select class="form-input" id="invite-role" required>
+              <option value="property_manager">Property Manager</option>
+              <option value="contractor">Contractor</option>
+              <option value="inspector">Inspector</option>
+              <option value="viewer">Viewer</option>
+            </select>
+          </div>
+          <div id="invite-result" class="card" style="display:none;margin-top:var(--space-4);padding:var(--space-4);background:var(--color-gray-50);">
+            <p class="text-sm" style="margin-bottom:var(--space-2);">Invite link created! Share this with your team member:</p>
+            <input class="form-input" type="text" id="invite-url" readonly style="font-size:var(--font-size-xs);">
+            <button type="button" class="btn btn--sm btn--primary" id="copy-invite-btn" style="margin-top:var(--space-2);">Copy Link</button>
+          </div>
+        </div>
+        <div class="modal__footer" id="invite-footer">
+          <button type="button" class="btn btn--secondary" id="cancel-invite-btn">Cancel</button>
+          <button type="submit" class="btn btn--primary" id="send-invite-btn">Create Invite</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

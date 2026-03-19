@@ -1,1 +1,71 @@
-<!-- SiteLedgers: issue-detail -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <a href="#/dashboard" class="btn btn--text btn--sm" id="back-link" style="margin-bottom:var(--space-2);display:inline-flex;">&larr; Back</a>
+      <h1 id="issue-title">Loading...</h1>
+      <p class="text-sm text-muted" id="issue-property-name"></p>
+    </div>
+    <div style="display:flex;gap:var(--space-2);align-items:center;">
+      <span class="badge" id="issue-status-badge"></span>
+      <span class="badge" id="issue-priority-badge"></span>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);">
+    <!-- Left column -->
+    <div>
+      <div class="card mb-6">
+        <div class="card__header"><h3 class="card__title">Details</h3></div>
+        <div class="card__body">
+          <p id="issue-description" class="text-sm" style="white-space:pre-wrap;margin-bottom:var(--space-4);"></p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+            <div><span class="text-xs text-muted">Category</span><p class="text-sm" id="issue-category">—</p></div>
+            <div><span class="text-xs text-muted">Location</span><p class="text-sm" id="issue-location">—</p></div>
+            <div><span class="text-xs text-muted">Due Date</span><p class="text-sm" id="issue-due-date">—</p></div>
+            <div><span class="text-xs text-muted">Created</span><p class="text-sm" id="issue-created">—</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="card__header"><h3 class="card__title">Assigned To</h3></div>
+        <div class="card__body">
+          <p class="text-sm" id="issue-assignee">Unassigned</p>
+          <div id="assign-section" style="margin-top:var(--space-3);display:none;" data-permission="issue_assign">
+            <select class="form-input" id="assign-select" style="max-width:300px;">
+              <option value="">Select team member...</option>
+            </select>
+            <button class="btn btn--sm btn--primary" id="assign-btn" style="margin-top:var(--space-2);">Assign</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__header"><h3 class="card__title">Activity</h3></div>
+        <div id="issue-activity"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <div class="card mb-6" id="status-actions-card">
+        <div class="card__header"><h3 class="card__title">Update Status</h3></div>
+        <div class="card__body" id="status-actions"></div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="card__header"><h3 class="card__title">Add Comment</h3></div>
+        <div class="card__body">
+          <textarea class="form-input" id="comment-text" rows="3" placeholder="Write a comment..."></textarea>
+          <button class="btn btn--sm btn--primary" id="add-comment-btn" style="margin-top:var(--space-2);">Post Comment</button>
+        </div>
+      </div>
+
+      <div class="card" data-permission="issue_delete">
+        <div class="card__body">
+          <button class="btn btn--sm btn--ghost" id="delete-issue-btn" style="color:var(--color-danger);">Delete Issue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -256,6 +256,7 @@
 .badge--completed  { background: rgba(34, 197, 94, 0.12); color: #16A34A; }
 .badge--verified   { background: rgba(183, 243, 77, 0.15); color: #7da832; }
 .badge--closed     { background: var(--color-gray-100); color: var(--color-gray-500); }
+.badge--scheduled  { background: rgba(139, 92, 246, 0.12); color: #7C3AED; }
 
 /* Priority badges */
 .badge--critical,
@@ -266,6 +267,13 @@
 /* User status */
 .badge--active  { background: rgba(34, 197, 94, 0.12); color: #16A34A; }
 .badge--invited { background: rgba(59, 130, 246, 0.12); color: #3B82F6; }
+
+/* User roles */
+.badge--owner              { background: rgba(183, 243, 77, 0.15); color: #7da832; }
+.badge--property_manager   { background: rgba(59, 130, 246, 0.12); color: #3B82F6; }
+.badge--contractor         { background: rgba(245, 158, 11, 0.12); color: #D97706; }
+.badge--inspector          { background: rgba(139, 92, 246, 0.12); color: #7C3AED; }
+.badge--viewer             { background: var(--color-gray-100); color: var(--color-gray-500); }
 
 /* Property type */
 .badge--residential { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
@@ -394,7 +402,8 @@
 
 /* ─── Modal ────────────────────────────────────────────── */
 
-.modal-backdrop {
+.modal-backdrop,
+.modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(18, 24, 38, 0.6);

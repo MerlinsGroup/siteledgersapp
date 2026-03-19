@@ -365,10 +365,8 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
   max-width: 1100px;
-  margin: -40px auto 0;
-  padding: 0 var(--space-6);
-  position: relative;
-  z-index: 1;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6) 0;
 }
 
 .pricing-card {
@@ -388,6 +386,7 @@
 .pricing-card--popular {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-md);
+  z-index: 2;
 }
 
 .pricing-card__badge {

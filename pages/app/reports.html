@@ -1,1 +1,33 @@
-<!-- SiteLedgers: reports -->
+<div class="page">
+  <div class="page-header">
+    <h1>Reports & Audit Trail</h1>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-card__label">Total Issues</div><div class="stat-card__value" id="report-total-issues">0</div></div>
+    <div class="stat-card"><div class="stat-card__label">Open</div><div class="stat-card__value stat-card__value--warning" id="report-open-issues">0</div></div>
+    <div class="stat-card"><div class="stat-card__label">Resolved</div><div class="stat-card__value stat-card__value--success" id="report-resolved-issues">0</div></div>
+    <div class="stat-card"><div class="stat-card__label">Avg Resolution</div><div class="stat-card__value" id="report-avg-resolution">—</div></div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Issues by Property</h3></div>
+      <div id="issues-by-property"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Issues by Status</h3></div>
+      <div id="issues-by-status"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Audit Trail</h3></div>
+      <div id="audit-trail"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    </div>
+  </div>
+</div>

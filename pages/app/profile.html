@@ -1,1 +1,68 @@
-<!-- SiteLedgers: profile -->
+<div class="page">
+  <div class="page-header">
+    <h1>Profile</h1>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);max-width:800px;">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Personal Information</h3></div>
+      <div class="card__body">
+        <form id="profile-form">
+          <div class="form-group">
+            <label class="form-label" for="profile-name">Full Name</label>
+            <input class="form-input" type="text" id="profile-name" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profile-email">Email</label>
+            <input class="form-input" type="email" id="profile-email" disabled>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profile-phone">Phone</label>
+            <input class="form-input" type="tel" id="profile-phone" placeholder="Phone number">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profile-company">Company</label>
+            <input class="form-input" type="text" id="profile-company" placeholder="Company name">
+          </div>
+          <button type="submit" class="btn btn--primary" id="save-profile-btn">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <div>
+      <div class="card mb-6">
+        <div class="card__header"><h3 class="card__title">Account</h3></div>
+        <div class="card__body">
+          <div style="margin-bottom:var(--space-3);">
+            <span class="text-xs text-muted">Role</span>
+            <p class="text-sm" id="profile-role" style="text-transform:capitalize;">—</p>
+          </div>
+          <div style="margin-bottom:var(--space-3);">
+            <span class="text-xs text-muted">Organisation</span>
+            <p class="text-sm" id="profile-org">—</p>
+          </div>
+          <div>
+            <span class="text-xs text-muted">Member Since</span>
+            <p class="text-sm" id="profile-since">—</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__header"><h3 class="card__title">Notifications</h3></div>
+        <div class="card__body">
+          <label style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3);font-size:var(--font-size-sm);">
+            <input type="checkbox" id="pref-assignment" checked> Email on assignment
+          </label>
+          <label style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3);font-size:var(--font-size-sm);">
+            <input type="checkbox" id="pref-overdue" checked> Email on overdue
+          </label>
+          <label style="display:flex;align-items:center;gap:var(--space-2);font-size:var(--font-size-sm);">
+            <input type="checkbox" id="pref-status-change" checked> Email on status change
+          </label>
+          <button class="btn btn--sm btn--ghost" id="save-prefs-btn" style="margin-top:var(--space-4);">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

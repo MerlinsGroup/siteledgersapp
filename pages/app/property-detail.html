@@ -1,1 +1,34 @@
-<\!-- SiteLedgers: property-detail -->
+<div class="page">
+  <div class="page-header">
+    <div>
+      <a href="#/properties" class="btn btn--text btn--sm" style="margin-bottom:var(--space-2);display:inline-flex;">&larr; Properties</a>
+      <h1 id="property-name">Loading...</h1>
+      <p class="text-sm text-muted" id="property-address"></p>
+    </div>
+    <a id="log-issue-btn" href="#" class="btn btn--primary" data-permission="issue_create">Log Issue</a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-card__label">Type</div><div class="stat-card__value" id="prop-type" style="font-size:var(--font-size-lg);text-transform:capitalize;">—</div></div>
+    <div class="stat-card"><div class="stat-card__label">Units</div><div class="stat-card__value" id="prop-units">—</div></div>
+    <div class="stat-card"><div class="stat-card__label">Open Issues</div><div class="stat-card__value stat-card__value--warning" id="prop-open-issues">0</div></div>
+  </div>
+
+  <div id="prop-desc-section" class="card mb-6" style="display:none;">
+    <p class="text-sm" id="prop-desc"></p>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Issues</h3></div>
+      <div id="property-issues"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="card">
+      <div class="card__header"><h3 class="card__title">Inspections</h3></div>
+      <div id="property-inspections"><div class="loading-spinner"><div class="spinner"></div><p>Loading...</p></div></div>
+    </div>
+  </div>
+</div>
