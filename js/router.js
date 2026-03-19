@@ -17,6 +17,7 @@ const routes = {
   '/verify-email':  { page: 'pages/public/verify-email.html',     script: 'js/pages/verify-email.js',      auth: false,  title: 'Verify Email — SiteLedgers' },
   '/join':          { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
   '/join/:code':    { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
+  '/pricing':       { page: 'pages/public/pricing.html',           script: 'js/pages/pricing.js',           auth: false,  title: 'Pricing — SiteLedgers' },
   '/contact':       { page: 'pages/public/contact.html',          script: null,                            auth: false,  title: 'Contact Us — SiteLedgers' },
 
   // Authenticated app pages
