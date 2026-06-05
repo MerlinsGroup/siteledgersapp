@@ -86,8 +86,13 @@ function setupStatCounters() {
           const numEl = entry.target.querySelector('.l-stat-number');
           if (!numEl) return;
 
-          const target = parseFloat(numEl.dataset.target || '0');
+          const target = parseFloat(numEl.dataset.target);
           const suffix = numEl.dataset.suffix || '';
+          // Skip the count-up for non-numeric stats (leave their text untouched).
+          if (Number.isNaN(target)) {
+            observer.unobserve(entry.target);
+            return;
+          }
           const duration = 1500;
           const start = performance.now();
 

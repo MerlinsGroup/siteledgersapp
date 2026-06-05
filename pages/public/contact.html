@@ -1,1 +1,240 @@
 <!-- SiteLedgers: contact -->
+<style>
+  .contact-page { min-height: 100vh; background: var(--color-off-white); }
+
+  /* Hero */
+  .contact-hero {
+    background: var(--color-charcoal);
+    padding: 4rem 1.5rem 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-hero__glow {
+    position: absolute;
+    width: 460px; height: 460px;
+    background: radial-gradient(circle, rgba(183,243,77,0.10) 0%, transparent 70%);
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .contact-hero__logo {
+    position: relative; z-index: 2;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .contact-hero__logo span { color: var(--color-primary); }
+  .contact-hero h1 {
+    position: relative; z-index: 2;
+    color: #fff;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: -1px;
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+  }
+  .contact-hero p {
+    position: relative; z-index: 2;
+    color: rgba(255,255,255,0.55);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* Layout */
+  .contact-wrap {
+    max-width: 1000px;
+    margin: -4rem auto 4rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 3;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .contact-card {
+    background: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .contact-card__img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+  }
+  .contact-card__inner { padding: var(--space-6); }
+  .contact-card__inner h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-2);
+  }
+  .contact-card__lead {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
+  }
+
+  /* Contact methods */
+  .contact-method {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--color-gray-100);
+  }
+  .contact-method__icon {
+    width: 40px; height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: rgba(183, 243, 77, 0.15);
+    color: var(--color-primary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .contact-method__icon svg { width: 20px; height: 20px; }
+  .contact-method__label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-400);
+    margin-bottom: 2px;
+  }
+  .contact-method__value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-charcoal);
+  }
+  .contact-method__value a { color: var(--color-primary-dark); }
+  .contact-method__note { font-size: var(--font-size-xs); color: var(--color-gray-500); }
+
+  /* Success state */
+  .contact-success {
+    display: none;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    color: #15803d;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+  }
+
+  .contact-back {
+    text-align: center;
+    margin-top: var(--space-6);
+    font-size: var(--font-size-sm);
+  }
+
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .contact-hero { padding: 3rem 1.25rem 6rem; }
+    .contact-wrap { margin-top: -4rem; }
+  }
+</style>
+
+<div class="contact-page">
+  <section class="contact-hero">
+    <div class="contact-hero__glow"></div>
+    <a href="#/" class="contact-hero__logo">Site<span>Ledgers</span></a>
+    <h1>Talk to us</h1>
+    <p>Questions about rollout, pricing, or whether SiteLedgers fits your sites? Send a message or book a quick demo.</p>
+  </section>
+
+  <div class="contact-wrap">
+    <div class="contact-grid">
+
+      <!-- Contact details -->
+      <div class="contact-card">
+        <img class="contact-card__img" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&h=320&fit=crop" alt="Two people shaking hands in an office" loading="lazy">
+        <div class="contact-card__inner">
+          <h2>Get in touch</h2>
+          <p class="contact-card__lead">We aim to reply within one working day. No call centres, no bots — you'll hear from the team that builds the product.</p>
+
+          <div class="contact-method">
+            <div class="contact-method__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+            </div>
+            <div>
+              <div class="contact-method__label">Email</div>
+              <div class="contact-method__value"><a href="mailto:hello@bordodesign.co">hello@bordodesign.co</a></div>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="contact-method__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="contact-method__label">Book a demo</div>
+              <div class="contact-method__value"><a href="https://calendly.com/merlinsgroup/siteledgers" target="_blank" rel="noopener">Grab a 20-minute slot</a></div>
+              <div class="contact-method__note">A live walkthrough, no commitment.</div>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="contact-method__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+            </div>
+            <div>
+              <div class="contact-method__label">Hours</div>
+              <div class="contact-method__value">Mon–Fri, 9am–5pm UK time</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message form -->
+      <div class="contact-card">
+        <div class="contact-card__inner">
+          <h2>Send a message</h2>
+          <p class="contact-card__lead">Tell us a little about your sites and what you're trying to track. We'll come back with honest answers.</p>
+
+          <div id="contact-success" class="contact-success">Thanks — your email app should have opened with the message ready to send. If it didn't, email us at hello@bordodesign.co.</div>
+
+          <form id="contact-form" novalidate>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="contact-name">Your name</label>
+                <input type="text" id="contact-name" class="form-input" placeholder="Jane Smith" autocomplete="name" required>
+                <div class="field-error">Please enter your name.</div>
+              </div>
+              <div class="form-group">
+                <label for="contact-company">Company <span style="color:var(--color-gray-400);font-weight:400;">(optional)</span></label>
+                <input type="text" id="contact-company" class="form-input" placeholder="e.g. Bordo Design" autocomplete="organization">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-email">Work email</label>
+              <input type="email" id="contact-email" class="form-input" placeholder="you@company.com" autocomplete="email" required>
+              <div class="field-error">Please enter a valid email address.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-message">How can we help?</label>
+              <textarea id="contact-message" class="form-textarea" placeholder="What would you like to track, and how many sites or units are involved?" required></textarea>
+              <div class="field-error">Please add a short message.</div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full btn--lg">Send Message</button>
+          </form>
+
+          <p class="contact-back">Prefer to set things up yourself? <a href="#/signup">Create a free account</a></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

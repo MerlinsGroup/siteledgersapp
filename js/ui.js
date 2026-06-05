@@ -133,7 +133,9 @@ function renderNavbar() {
   const mobileToggle = document.getElementById('mobile-nav-toggle');
   if (mobileToggle) {
     mobileToggle.addEventListener('click', () => {
-      container.querySelector('.navbar__links')?.classList.toggle('navbar__links--open');
+      const links = container.querySelector('.navbar__links');
+      const isOpen = links?.classList.toggle('navbar__links--open');
+      mobileToggle.classList.toggle('is-open', !!isOpen);
     });
   }
 }

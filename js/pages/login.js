@@ -43,6 +43,13 @@ export function init() {
     }
   });
 
+  // ── One-click demo login ──
+  document.getElementById('demo-fill-btn')?.addEventListener('click', () => {
+    document.getElementById('login-email').value = 'demo@bordodesign.co';
+    document.getElementById('login-password').value = 'demo1234';
+    loginForm.requestSubmit ? loginForm.requestSubmit() : loginForm.dispatchEvent(new Event('submit', { cancelable: true }));
+  });
+
   // ── Forgot password toggle ──
   document.getElementById('forgot-password-link')?.addEventListener('click', (e) => {
     e.preventDefault();

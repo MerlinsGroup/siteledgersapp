@@ -18,7 +18,7 @@ const routes = {
   '/join':          { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
   '/join/:code':    { page: 'pages/public/join.html',             script: 'js/pages/join.js',              auth: false,  title: 'Join Organisation — SiteLedgers' },
   '/pricing':       { page: 'pages/public/pricing.html',           script: 'js/pages/pricing.js',           auth: false,  title: 'Pricing — SiteLedgers' },
-  '/contact':       { page: 'pages/public/contact.html',          script: null,                            auth: false,  title: 'Contact Us — SiteLedgers' },
+  '/contact':       { page: 'pages/public/contact.html',          script: 'js/pages/contact.js',           auth: false,  title: 'Contact Us — SiteLedgers' },
 
   // Authenticated app pages
   '/dashboard':       { page: 'pages/app/dashboard.html',           script: 'js/pages/dashboard.js',       auth: true,   title: 'Portfolio Dashboard — SiteLedgers' },
@@ -115,6 +115,15 @@ async function handleRouteChange() {
     }
 
     const { route, params, pattern } = result;
+
+    // ── Registration lockdown ──
+    // Self-service registration is disabled in this demo deployment.
+    // Any sign-up / invite / verify route is sent back to login.
+    if (path === '/signup' || path === '/verify-email' || path === '/join' || path.startsWith('/join/')) {
+      navigating = false;
+      navigateTo('/login');
+      return;
+    }
 
     // ── Auth guard ──
     if (route.auth && !isAuthenticated()) {

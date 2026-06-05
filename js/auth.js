@@ -26,6 +26,19 @@ import {
 import { auth, db } from './firebase-init.js';
 import { setState, clearState } from './state.js';
 
+// ─── Demo Lockdown ──────────────────────────────────────
+// This deployment is locked to a single demo account. Self-service
+// registration is disabled, and only DEMO_EMAIL is allowed to sign in.
+// NOTE: this is client-side enforcement. For a hard guarantee, also lock
+// down account creation in the Firebase console and via Firestore rules.
+const DEMO_EMAIL = 'demo@bordodesign.co';
+const REGISTRATION_DISABLED_MSG =
+  'Registration is disabled. This is a locked demo — please sign in with the demo account.';
+
+function isDemoEmail(email) {
+  return (email || '').trim().toLowerCase() === DEMO_EMAIL;
+}
+
 // ─── Login ──────────────────────────────────────────────
 
 /**
@@ -34,6 +47,10 @@ import { setState, clearState } from './state.js';
  * Returns { success: true } or { success: false, error: string }.
  */
 async function login(email, password) {
+  // Lockdown: only the demo account may sign in.
+  if (!isDemoEmail(email)) {
+    return { success: false, error: 'This is a locked demo. Only the demo account can sign in.' };
+  }
   try {
     const credential = await signInWithEmailAndPassword(auth, email, password);
     const uid = credential.user.uid;
@@ -101,9 +118,16 @@ function initAuth() {
   return new Promise((resolve) => {
     onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Try to load session — works for verified users and
-        // existing accounts created before email verification was added
-        await loadUserSession(firebaseUser.uid);
+        // Lockdown: only the demo account is permitted. Sign out anyone else
+        // (e.g. a persisted session from a previously created account).
+        if (!isDemoEmail(firebaseUser.email)) {
+          await signOut(auth).catch(() => {});
+          clearState();
+        } else {
+          // Try to load session — works for verified users and
+          // existing accounts created before email verification was added
+          await loadUserSession(firebaseUser.uid);
+        }
       } else {
         clearState();
       }
@@ -175,6 +199,10 @@ async function loadUserSession(uid) {
  * Returns { success: true } or { success: false, error: string }.
  */
 async function signup(email, password, name, orgName) {
+  // Registration is disabled in this locked demo deployment.
+  return { success: false, error: REGISTRATION_DISABLED_MSG };
+
+  /* eslint-disable no-unreachable */
   try {
     let uid;
 
@@ -345,6 +373,9 @@ async function getInvite(inviteCode) {
  * Returns { success: true } or { success: false, error }.
  */
 async function joinOrganisation(inviteCode, password) {
+  // Registration via invite is disabled in this locked demo deployment.
+  return { success: false, error: REGISTRATION_DISABLED_MSG };
+
   try {
     // 1. Load the invite
     const invite = await getInvite(inviteCode);

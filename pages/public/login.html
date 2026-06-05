@@ -3,6 +3,14 @@
     <div class="login-card__logo">Site<span>Ledgers</span></div>
     <p class="login-card__subtitle">Property Oversight & Accountability</p>
 
+    <div class="login-demo-note" style="background:rgba(183,243,77,0.1);border:1px solid rgba(183,243,77,0.35);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-5);font-size:var(--font-size-sm);color:var(--color-gray-600);line-height:1.6;">
+      <strong style="display:block;color:var(--color-charcoal);margin-bottom:var(--space-1);">Demo access</strong>
+      This is a locked demo. Sign in with the demo account:<br>
+      <code style="background:rgba(18,24,38,0.06);padding:1px 6px;border-radius:4px;">demo@bordodesign.co</code> ·
+      <code style="background:rgba(18,24,38,0.06);padding:1px 6px;border-radius:4px;">demo1234</code>
+      <button type="button" id="demo-fill-btn" class="btn btn--secondary btn--sm btn--full" style="margin-top:var(--space-3);">Use demo login</button>
+    </div>
+
     <div id="login-error" class="login-card__error"></div>
 
     <form id="login-form" novalidate>
@@ -20,7 +28,7 @@
       <button type="submit" id="login-btn" class="btn btn--primary btn--full btn--lg">Sign In</button>
     </form>
 
-    <p class="login-card__footer">Don't have an account? <a href="#/signup">Create one</a></p>
+    <p class="login-card__footer">Want access for your team? <a href="#/contact">Get in touch</a></p>
 
     <!-- Forgot password form (hidden by default) -->
     <form id="reset-form" style="display:none;" novalidate>

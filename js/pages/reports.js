@@ -73,18 +73,20 @@ async function loadByProperty() {
     }).sort((a, b) => b.open - a.open);
 
     container.innerHTML = `
-      <table class="table" style="width:100%;">
-        <thead><tr><th>Property</th><th>Open</th><th>Total</th></tr></thead>
-        <tbody>
-          ${rows.map((r) => `
-            <tr>
-              <td><a href="#/properties/${r.id}" style="color:var(--color-charcoal);font-weight:var(--font-weight-medium);">${escapeHTML(r.name)}</a></td>
-              <td><span class="${r.open > 0 ? 'text-warning' : ''}">${r.open}</span></td>
-              <td>${r.total}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table class="table" style="width:100%;">
+          <thead><tr><th>Property</th><th>Open</th><th>Total</th></tr></thead>
+          <tbody>
+            ${rows.map((r) => `
+              <tr>
+                <td><a href="#/properties/${r.id}" style="color:var(--color-charcoal);font-weight:var(--font-weight-medium);">${escapeHTML(r.name)}</a></td>
+                <td><span class="${r.open > 0 ? 'text-warning' : ''}">${r.open}</span></td>
+                <td>${r.total}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     `;
   } catch (err) {
     console.error('Error loading issues by property:', err);

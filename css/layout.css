@@ -101,6 +101,8 @@
   border: none;
   padding: var(--space-2);
   margin-left: var(--space-3);
+  position: relative;
+  z-index: 1000; /* stay above the full-screen links overlay so it can close */
 }
 
 .navbar__mobile-toggle span {
@@ -111,6 +113,10 @@
   border-radius: 2px;
   transition: transform 0.3s, opacity 0.3s;
 }
+
+.navbar__mobile-toggle.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar__mobile-toggle.is-open span:nth-child(2) { opacity: 0; }
+.navbar__mobile-toggle.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ─── Page Layout ──────────────────────────────────────── */
 
