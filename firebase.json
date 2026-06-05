@@ -16,7 +16,14 @@
       "*.py",
       "node_modules",
       "*.rules",
-      "firestore.indexes.json"
+      "firestore.indexes.json",
+      "seed.html",
+      "seed-demo.html",
+      "_harness.html",
+      "js/create-stripe-products.js",
+      "stripe-config-output.json",
+      "pages/public/hello.html",
+      "pages/public/index.htlm.txt"
     ],
     "rewrites": [
       {
